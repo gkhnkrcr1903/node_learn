@@ -1,0 +1,2021 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Node.js Akademi</title>
+<style>
+:root{--bg:#f6f7f9;--panel:#fff;--text:#1d2330;--muted:#5d6678;--line:#dde1e8;--accent:#2f8f46;--accent2:#e8f5ec;--code:#0f1420;--codetext:#e6edf3;--err:#c0392b;--warn:#b7791f}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--panel:#161b22;--text:#e6edf3;--muted:#8b949e;--line:#30363d;--accent:#3fb950;--accent2:#12261a;--code:#010409}}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden}
+aside{width:290px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;padding:16px}
+aside h1{font-size:19px;margin:0 0 4px}
+.prog{height:6px;background:var(--line);border-radius:3px;margin:8px 0 4px;overflow:hidden}
+.prog>div{height:100%;background:var(--accent);width:0;transition:width .3s}
+.level{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:18px 0 6px;font-weight:600}
+.lesson-link{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:6px;cursor:pointer;font-size:14px}
+.lesson-link:hover{background:var(--bg)}
+.lesson-link.active{background:var(--accent2);color:var(--accent);font-weight:600}
+.lesson-link .chk{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;display:grid;place-items:center;font-size:11px}
+.lesson-link.done .chk{background:var(--accent);border-color:var(--accent);color:#fff}
+main{flex:1;display:flex;overflow:hidden}
+#content{flex:1;overflow-y:auto;padding:28px 36px;min-width:0}
+#content h2{margin-top:0;font-size:26px}
+#content h3{margin-top:28px}
+#content code{background:var(--bg);border:1px solid var(--line);padding:1px 5px;border-radius:4px;font-size:13px}
+#content pre{background:var(--code);color:var(--codetext);padding:14px;border-radius:8px;overflow-x:auto;font-size:13px}
+#content pre code{background:none;border:0;padding:0;color:inherit}
+.note{border-left:4px solid var(--accent);background:var(--accent2);padding:10px 14px;border-radius:0 6px 6px 0;margin:14px 0}
+.note.warn{border-color:var(--warn);background:transparent;border:1px solid var(--line);border-left:4px solid var(--warn)}
+.task{border:2px dashed var(--accent);padding:12px 16px;border-radius:8px;margin:20px 0}
+.task.ok{border-style:solid;background:var(--accent2)}
+.quiz{border:1px solid var(--line);border-radius:8px;padding:12px 16px;margin:16px 0;background:var(--panel)}
+.quiz button{display:block;width:100%;text-align:left;margin:6px 0;padding:8px 12px;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:6px;cursor:pointer;font:inherit}
+.quiz button.right{border-color:var(--accent);background:var(--accent2)}
+.quiz button.wrong{border-color:var(--err);color:var(--err)}
+.nav{display:flex;justify-content:space-between;margin-top:30px}
+.btn{background:var(--accent);color:#fff;border:0;padding:8px 16px;border-radius:6px;cursor:pointer;font:inherit;font-weight:600}
+.btn.sec{background:var(--panel);color:var(--text);border:1px solid var(--line)}
+#lab{width:46%;min-width:360px;display:flex;flex-direction:column;border-left:1px solid var(--line);background:var(--code)}
+.labbar{display:flex;gap:8px;align-items:center;padding:8px 12px;background:var(--panel);border-bottom:1px solid var(--line)}
+.labbar .title{flex:1;font-weight:600;font-size:13px;color:var(--muted)}
+.edwrap{flex:1.3;position:relative;min-height:0;display:flex}
+#gutter{padding:12px 6px 12px 10px;color:#4b5563;font:13px/1.55 ui-monospace,Consolas,monospace;text-align:right;user-select:none;overflow:hidden;white-space:pre}
+#editor{flex:1;background:transparent;color:var(--codetext);border:0;outline:0;resize:none;padding:12px;font:13px/1.55 ui-monospace,Consolas,monospace;tab-size:2;white-space:pre;overflow:auto}
+.outbar{padding:6px 12px;background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+#out{flex:1;overflow:auto;padding:10px 12px;font:13px/1.5 ui-monospace,Consolas,monospace;color:var(--codetext);white-space:pre-wrap;margin:0;min-height:0}
+#out .e{color:#ff7b72}#out .w{color:#e3b341}#out .i{color:#79c0ff}#out .s{color:#8b949e}
+#menuBtn{display:none}
+@media (max-width:1000px){
+ body{flex-direction:column;height:auto;overflow:auto}
+ aside{width:100%;display:none;border-right:0}aside.open{display:block}
+ main{flex-direction:column;overflow:visible}
+ #content{padding:16px}
+ #lab{width:100%;min-width:0;height:80vh}
+ #menuBtn{display:block;margin:8px 16px}
+}
+</style>
+</head>
+<body>
+<button id="menuBtn" class="btn sec" onclick="document.querySelector('aside').classList.toggle('open')">☰ Dersler</button>
+<aside>
+  <h1>🟢 Node.js Akademi</h1>
+  <div style="font-size:13px;color:var(--muted)">Kurulumsuz, sıfırdan ileri seviyeye</div>
+  <div class="prog"><div id="progbar"></div></div>
+  <div id="progtxt" style="font-size:12px;color:var(--muted)"></div>
+  <div id="toc"></div>
+</aside>
+<main>
+  <section id="content"></section>
+  <section id="lab">
+    <div class="labbar">
+      <span class="title">📄 index.js — Node Laboratuvarı</span>
+      <button class="btn sec" id="resetBtn" title="Dersin örnek koduna dön">↺ Sıfırla</button>
+      <button class="btn sec" id="fixBtn" title="Kodu analiz et ve hataları düzelt (Ctrl+Shift+F)">🩺 Düzelt</button>
+      <button class="btn" id="runBtn" title="Ctrl+Enter">▶ Çalıştır</button>
+    </div>
+    <div class="edwrap"><div id="gutter">1</div><textarea id="editor" spellcheck="false"></textarea></div>
+    <div class="outbar"><span>$ node index.js</span><span id="status"></span></div>
+    <pre id="out"></pre>
+  </section>
+</main>
+
+<script>
+/* =====================================================================
+   NODE SİMÜLATÖRÜ — tarayıcıda çalışan, Node API'lerinin eğitim amaçlı
+   bir alt kümesi: fs, fs/promises, path, events, util, os, http, crypto,
+   buffer, stream, timers, process ve localhost'a fetch.
+   ===================================================================== */
+const VFS = {};            // sanal dosya sistemi: { '/proje/a.txt': 'içerik' }
+function resetVFS(){
+  for (const k in VFS) delete VFS[k];
+  VFS['/proje/merhaba.txt'] = 'Merhaba Node.js!\nBu dosya sanal dosya sisteminde yaşıyor.';
+  VFS['/proje/veri.json'] = JSON.stringify({ kullanicilar:[{id:1,ad:'Ayşe'},{id:2,ad:'Mehmet'}] }, null, 2);
+  VFS['/proje/log.txt'] = 'satir 1\nsatir 2\nsatir 3\nsatir 4\nsatir 5';
+}
+
+function inspect(v, depth=0, seen=new WeakSet()){
+  if (typeof v === 'string') return depth ? `'${v}'` : v;
+  if (v === null) return 'null';
+  if (v === undefined) return 'undefined';
+  if (typeof v === 'function') return v.prototype && /^class /.test(v.toString()) ? `[class ${v.name}]` : `[Function: ${v.name||'(anonymous)'}]`;
+  if (typeof v === 'bigint') return v+'n';
+  if (typeof v === 'symbol') return v.toString();
+  if (typeof v !== 'object') return String(v);
+  if (seen.has(v)) return '[Circular]';
+  const tg = tag(v);
+  if (tg==='Error') return v.stack && depth===0 ? `${v.name}: ${v.message}` : `[${v.name}: ${v.message}]`;
+  if (tg==='Date') return v.toISOString();
+  if (tg==='RegExp') return v.toString();
+  if (v instanceof NodeBuffer) return `<Buffer ${[...v.bytes.slice(0,50)].map(b=>b.toString(16).padStart(2,'0')).join(' ')}${v.length>50?' ...':''}>`;
+  if (tg==='Promise') return 'Promise { <pending> }';
+  if (depth > 3) return Array.isArray(v) ? '[Array]' : '[Object]';
+  seen.add(v);
+  if (tg==='Map') return `Map(${v.size}) { ${[...v].map(([k,x])=>inspect(k,depth+1,seen)+' => '+inspect(x,depth+1,seen)).join(', ')} }`;
+  if (tg==='Set') return `Set(${v.size}) { ${[...v].map(x=>inspect(x,depth+1,seen)).join(', ')} }`;
+  if (Array.isArray(v)) { const s = v.map(x=>inspect(x,depth+1,seen)); return s.join(', ').length>70 ? `[\n${'  '.repeat(depth+1)}${s.join(',\n'+'  '.repeat(depth+1))}\n${'  '.repeat(depth)}]` : `[ ${s.join(', ')} ]`; }
+  const keys = Object.keys(v);
+  const name = v.constructor && v.constructor.name && v.constructor.name !== 'Object' ? v.constructor.name+' ' : '';
+  if (!keys.length) return name+'{}';
+  const parts = keys.map(k=>`${/^[a-zA-Z_$][\w$]*$/.test(k)?k:`'${k}'`}: ${inspect(v[k],depth+1,seen)}`);
+  return parts.join(', ').length>70 ? `${name}{\n${'  '.repeat(depth+1)}${parts.join(',\n'+'  '.repeat(depth+1))}\n${'  '.repeat(depth)}}` : `${name}{ ${parts.join(', ')} }`;
+}
+function format(...a){
+  if (typeof a[0]==='string' && /%[sdifjoO%]/.test(a[0])) {
+    let f=a.shift();
+    f=f.replace(/%([sdifjoO%])/g,(m,c)=>{ if(c==='%')return'%'; if(!a.length)return m; const x=a.shift();
+      return c==='s'?String(x):c==='d'||c==='i'?String(parseInt(x)):c==='f'?String(parseFloat(x)):c==='j'?JSON.stringify(x):inspect(x,1);});
+    return [f,...a.map(x=>inspect(x))].join(' ');
+  }
+  return a.map(x=>inspect(x)).join(' ');
+}
+
+// ---------- events ----------
+class EventEmitter {
+  constructor(){ this._ev = {}; }
+  on(n,f){ (this._ev[n] ||= []).push(f); return this; }
+  addListener(n,f){ return this.on(n,f); }
+  prependListener(n,f){ (this._ev[n] ||= []).unshift(f); return this; }
+  once(n,f){ const w=(...a)=>{ this.off(n,w); f.apply(this,a); }; w.orig=f; return this.on(n,w); }
+  off(n,f){ if(this._ev[n]) this._ev[n]=this._ev[n].filter(x=>x!==f && x.orig!==f); return this; }
+  removeListener(n,f){ return this.off(n,f); }
+  removeAllListeners(n){ n ? delete this._ev[n] : this._ev={}; return this; }
+  emit(n,...a){ const l=this._ev[n]; if(!l||!l.length){ if(n==='error') throw a[0]; return false; } [...l].forEach(f=>f.apply(this,a)); return true; }
+  listenerCount(n){ return (this._ev[n]||[]).length; }
+  eventNames(){ return Object.keys(this._ev).filter(k=>this._ev[k].length); }
+}
+EventEmitter.once = (em,n)=>new Promise(r=>em.once(n,(...a)=>r(a)));
+EventEmitter.EventEmitter = EventEmitter;
+
+// ---------- Buffer ----------
+class NodeBuffer {
+  constructor(bytes){ this.bytes = bytes; }
+  static from(x, enc='utf8'){
+    if (x instanceof NodeBuffer) return new NodeBuffer(x.bytes.slice());
+    if (Array.isArray(x) || x instanceof Uint8Array) return new NodeBuffer(Uint8Array.from(x));
+    x=String(x);
+    if (enc==='hex') return new NodeBuffer(Uint8Array.from(x.match(/../g)||[],h=>parseInt(h,16)));
+    if (enc==='base64') return new NodeBuffer(Uint8Array.from(atob(x),c=>c.charCodeAt(0)));
+    return new NodeBuffer(new TextEncoder().encode(x));
+  }
+  static alloc(n,fill=0){ return new NodeBuffer(new Uint8Array(n).fill(fill)); }
+  static concat(list){ const t=new Uint8Array(list.reduce((s,b)=>s+b.length,0)); let o=0; list.forEach(b=>{t.set(b.bytes,o);o+=b.length;}); return new NodeBuffer(t); }
+  static byteLength(s){ return new TextEncoder().encode(s).length; }
+  static isBuffer(b){ return b instanceof NodeBuffer; }
+  get length(){ return this.bytes.length; }
+  toString(enc='utf8'){
+    if (enc==='hex') return [...this.bytes].map(b=>b.toString(16).padStart(2,'0')).join('');
+    if (enc==='base64') return btoa(String.fromCharCode(...this.bytes));
+    return new TextDecoder().decode(this.bytes);
+  }
+  toJSON(){ return {type:'Buffer',data:[...this.bytes]}; }
+  slice(a,b){ return new NodeBuffer(this.bytes.slice(a,b)); }
+  subarray(a,b){ return this.slice(a,b); }
+  equals(o){ return this.toString('hex')===o.toString('hex'); }
+  write(s,off=0){ const e=new TextEncoder().encode(s); this.bytes.set(e.slice(0,this.length-off),off); return Math.min(e.length,this.length-off); }
+  [Symbol.iterator](){ return this.bytes[Symbol.iterator](); }
+}
+// buf[0] gibi indeks erişimi için Proxy
+const BufferProxyHandler = { get(t,p){ if(typeof p==='string' && /^\d+$/.test(p)) return t.bytes[p]; const v=t[p]; return typeof v==='function'?v.bind(t):v; },
+  set(t,p,v){ if(/^\d+$/.test(p)) t.bytes[p]=v; else t[p]=v; return true; } };
+const Buffer = new Proxy(NodeBuffer, { get(t,p){ const v=t[p]; if(typeof v==='function' && ['from','alloc','concat'].includes(p)) return (...a)=>new Proxy(v.apply(t,a),BufferProxyHandler); return v; } });
+
+// ---------- path ----------
+const path = {
+  sep:'/', delimiter:':',
+  normalize(p){ const abs=p.startsWith('/'); const out=[]; p.split('/').forEach(s=>{ if(!s||s==='.')return; if(s==='..'){ if(out.length&&out[out.length-1]!=='..')out.pop(); else if(!abs)out.push('..'); } else out.push(s); }); return (abs?'/':'')+out.join('/') || (abs?'/':'.'); },
+  join(...a){ return path.normalize(a.filter(Boolean).join('/')); },
+  resolve(...a){ let r=''; for(let i=a.length-1;i>=0;i--){ r=a[i]+(r?'/'+r:''); if(a[i].startsWith('/'))break; } if(!r.startsWith('/')) r='/proje/'+r; return path.normalize(r).replace(/\/$/,'')||'/'; },
+  basename(p,ext){ let b=p.replace(/\/+$/,'').split('/').pop(); if(ext&&b.endsWith(ext)) b=b.slice(0,-ext.length); return b; },
+  dirname(p){ const i=p.replace(/\/+$/,'').lastIndexOf('/'); return i<=0?(p.startsWith('/')?'/':'.'):p.slice(0,i); },
+  extname(p){ const b=path.basename(p); const i=b.lastIndexOf('.'); return i<=0?'':b.slice(i); },
+  isAbsolute(p){ return p.startsWith('/'); },
+  relative(f,t){ const a=path.resolve(f).split('/').filter(Boolean), b=path.resolve(t).split('/').filter(Boolean); let i=0; while(i<a.length&&a[i]===b[i])i++; return [...Array(a.length-i).fill('..'),...b.slice(i)].join('/'); },
+  parse(p){ const base=path.basename(p), ext=path.extname(p); return { root:p.startsWith('/')?'/':'', dir:path.dirname(p), base, ext, name:ext?base.slice(0,-ext.length):base }; },
+  format(o){ return (o.dir?o.dir+'/':'')+(o.base||(o.name||'')+(o.ext||'')); },
+};
+path.posix = path;
+
+// ---------- fs ----------
+function fsErr(code,syscall,p){ const msg={ENOENT:'no such file or directory',EEXIST:'file already exists',ENOTDIR:'not a directory',EISDIR:'illegal operation on a directory'}[code]; const e=new Error(`${code}: ${msg}, ${syscall} '${p}'`); e.code=code; e.syscall=syscall; e.path=p; e.errno=-2; return e; }
+const isDir = p => p==='/' || p==='/proje' || Object.keys(VFS).some(k=>k.startsWith(p.replace(/\/$/,'')+'/')) || VFS[p]===DIR;
+const DIR = Symbol('dir');
+const enc = (data,o) => { const e = typeof o==='string'?o:o&&o.encoding; return e ? data : Buffer.from(data); };
+const fsSync = {
+  readFileSync(p,o){ p=path.resolve(String(p)); if(isDir(p)&&VFS[p]===undefined||VFS[p]===DIR) throw fsErr('EISDIR','read',p); if(!(p in VFS)) throw fsErr('ENOENT','open',p); return enc(VFS[p],o); },
+  writeFileSync(p,d){ p=path.resolve(String(p)); if(!isDir(path.dirname(p))) throw fsErr('ENOENT','open',p); VFS[p]= d instanceof NodeBuffer? d.toString(): typeof d==='string'?d:String(d); },
+  appendFileSync(p,d){ p=path.resolve(String(p)); VFS[p]=(VFS[p]&&VFS[p]!==DIR?VFS[p]:'')+(d instanceof NodeBuffer?d.toString():String(d)); },
+  existsSync(p){ p=path.resolve(String(p)); return p in VFS || isDir(p); },
+  unlinkSync(p){ p=path.resolve(String(p)); if(!(p in VFS)) throw fsErr('ENOENT','unlink',p); delete VFS[p]; },
+  mkdirSync(p,o={}){ p=path.resolve(String(p)); if(isDir(p)){ if(o.recursive) return; throw fsErr('EEXIST','mkdir',p);} if(!o.recursive && !isDir(path.dirname(p))) throw fsErr('ENOENT','mkdir',p); VFS[p]=DIR; },
+  readdirSync(p,o={}){ p=path.resolve(String(p)); if(!isDir(p)) throw fsErr(p in VFS?'ENOTDIR':'ENOENT','scandir',p); const pre=p.replace(/\/$/,'')+'/'; const names=new Set(); Object.keys(VFS).forEach(k=>{ if(k.startsWith(pre)) names.add(k.slice(pre.length).split('/')[0]); }); const arr=[...names].sort(); return o.withFileTypes? arr.map(n=>({name:n,isFile:()=>!isDir(pre+n),isDirectory:()=>isDir(pre+n)})) : arr; },
+  statSync(p){ p=path.resolve(String(p)); const d=isDir(p); if(!d && !(p in VFS)) throw fsErr('ENOENT','stat',p); return { size:d?4096:new TextEncoder().encode(VFS[p]).length, isFile:()=>!d, isDirectory:()=>d, mtime:new Date(), birthtime:new Date() }; },
+  renameSync(a,b){ a=path.resolve(a); b=path.resolve(b); if(!(a in VFS)) throw fsErr('ENOENT','rename',a); VFS[b]=VFS[a]; delete VFS[a]; },
+  copyFileSync(a,b){ fsSync.writeFileSync(b,fsSync.readFileSync(a,'utf8')); },
+  rmSync(p,o={}){ p=path.resolve(String(p)); if(!fsSync.existsSync(p)){ if(o.force) return; throw fsErr('ENOENT','rm',p);} Object.keys(VFS).forEach(k=>{ if(k===p||k.startsWith(p+'/')) delete VFS[k]; }); },
+};
+// G/Ç işlemleri laboratuvarın zamanlayıcısıyla planlanır: süreç bitene kadar beklenir, hatalar yakalanır
+let schedule = (f,ms)=>setTimeout(f,ms);
+const fsPromises = {}; const fs = { ...fsSync, promises: fsPromises, constants:{F_OK:0,R_OK:4,W_OK:2} };
+Object.keys(fsSync).forEach(k=>{
+  const base=k.replace(/Sync$/,''); if(base==='exists') return;
+  fsPromises[base] = (...a)=> new Promise((res,rej)=> schedule(()=>{ try{ res(fsSync[k](...a)); }catch(e){ rej(e); } }, 5+Math.random()*10));
+  fs[base] = (...a)=>{ const cb=a.pop(); if(typeof cb!=='function') throw new TypeError('Callback must be a function'); schedule(()=>{ let r; try{ r=fsSync[k](...a); }catch(e){ return cb(e); } cb(null,r); }, 5+Math.random()*10); };
+});
+fsPromises.access = p => fsPromises.stat(p).then(()=>undefined);
+fs.access = (p,...r)=>{ const cb=r.pop(); fs.stat(p,e=>cb(e||null)); };
+
+// ---------- stream ----------
+class Readable extends EventEmitter {
+  constructor(o={}){ super(); this._read=o.read; this.buf=[]; this.ended=false; this.flowing=false; this.objectMode=!!o.objectMode; }
+  push(c){ if(c===null){ this.ended=true; } else this.buf.push(c); this._flow(); return true; }
+  on(n,f){ super.on(n,f); if(n==='data'){ this.flowing=true; queueMicrotask(()=>this._flow()); } return this; }
+  _flow(){ if(!this.flowing||this._flowing) return; this._flowing=true; setTimeout(()=>{ this._flowing=false; while(this.buf.length){ this.emit('data',this.buf.shift()); } if(this.ended && !this._endEmitted){ this._endEmitted=true; this.emit('end'); this.emit('close'); } else if(!this.ended && this._read) { this._read(); } },0); }
+  pipe(dest){ this.on('data',c=>dest.write(c)); this.on('end',()=>dest.end&&dest.end()); return dest; }
+  async *[Symbol.asyncIterator](){ const q=[]; let done=false, wake; this.on('data',c=>{q.push(c);wake&&wake();}); this.on('end',()=>{done=true;wake&&wake();}); while(true){ if(q.length){ yield q.shift(); continue; } if(done) return; await new Promise(r=>wake=r); wake=null; } }
+  static from(it){ const r=new Readable({objectMode:true}); (async()=>{ for await (const x of it) r.push(x); r.push(null); })(); return r; }
+}
+class Writable extends EventEmitter {
+  constructor(o={}){ super(); this._write=o.write; this._final=o.final; }
+  write(c,e,cb){ this._write ? this._write(c, typeof e==='string'?e:'utf8', ()=>{}) : 0; return true; }
+  end(c){ if(c!==undefined) this.write(c); setTimeout(()=>{ this._final&&this._final(()=>{}); this.emit('finish'); this.emit('close'); },0); }
+}
+class Transform extends Readable {
+  constructor(o={}){ super(o); this._transform=o.transform; this._flush=o.flush; }
+  write(c){ this._transform(c,'utf8',(err,data)=>{ if(data!==undefined&&data!==null) this.push(data); }); return true; }
+  end(){ if(this._flush) this._flush((e,d)=>{ if(d) this.push(d); this.push(null); }); else this.push(null); }
+}
+const pipeline = (...s)=>{ const cb = typeof s[s.length-1]==='function'?s.pop():null; for(let i=0;i<s.length-1;i++) s[i].pipe(s[i+1]); const last=s[s.length-1]; const p=new Promise(r=>{ last.on('finish',r); last.on('end',r); }); if(cb) p.then(()=>cb()); return p; };
+fs.createReadStream = (p,o={})=>{ const data=fsSync.readFileSync(p,'utf8'); const size=o.highWaterMark||16; const r=new Readable(); let i=0; r._read=()=>{ if(i>=data.length) return r.push(null); r.push(o.encoding?data.slice(i,i+size):Buffer.from(data.slice(i,i+size))); i+=size; }; r._read(); return r; };
+fs.createWriteStream = p=>{ p=path.resolve(p); VFS[p]=''; return new Writable({ write(c,e,cb){ VFS[p]+=String(c); cb(); } }); };
+const stream = { Readable, Writable, Transform, pipeline, promises:{ pipeline } };
+
+// ---------- util ----------
+const util = {
+  format, inspect:(v,o)=>inspect(v,1),
+  promisify: fn => (...a)=> new Promise((res,rej)=> fn(...a,(e,r)=> e?rej(e):res(r))),
+  callbackify: fn => (...a)=>{ const cb=a.pop(); fn(...a).then(r=>cb(null,r),cb); },
+  isDeepStrictEqual:(a,b)=>JSON.stringify(a)===JSON.stringify(b),
+  types:{ isPromise:p=>p instanceof Promise, isDate:d=>d instanceof Date },
+  inherits:(c,p)=>Object.setPrototypeOf(c.prototype,p.prototype),
+};
+
+// ---------- os ----------
+const os = { platform:()=>'linux', type:()=>'Linux', arch:()=>'x64', cpus:()=>Array.from({length:navigator.hardwareConcurrency||4},()=>({model:'Sanal CPU',speed:2400})), totalmem:()=>8*1024**3, freemem:()=>Math.round(3.2*1024**3), homedir:()=>'/home/ogrenci', hostname:()=>'node-akademi', uptime:()=>Math.round(performance.now()/1000), EOL:'\n', userInfo:()=>({username:'ogrenci'}), tmpdir:()=>'/tmp' };
+
+// ---------- crypto (sha256 saf JS) ----------
+function sha256(bytes){
+  const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  let H=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const l=bytes.length, n=((l+9+63)>>6)<<6, m=new Uint8Array(n); m.set(bytes); m[l]=0x80; const dv=new DataView(m.buffer); dv.setUint32(n-4,l*8); dv.setUint32(n-8,Math.floor(l*8/2**32));
+  const r=(x,k)=>(x>>>k)|(x<<(32-k)), w=new Uint32Array(64);
+  for(let o=0;o<n;o+=64){ for(let i=0;i<16;i++) w[i]=dv.getUint32(o+i*4); for(let i=16;i<64;i++){ const s0=r(w[i-15],7)^r(w[i-15],18)^(w[i-15]>>>3), s1=r(w[i-2],17)^r(w[i-2],19)^(w[i-2]>>>10); w[i]=(w[i-16]+s0+w[i-7]+s1)|0; }
+    let [a,b,c,d,e,f,g,h]=H; for(let i=0;i<64;i++){ const t1=(h+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[i]+w[i])|0, t2=((r(a,2)^r(a,13)^r(a,22))+((a&b)^(a&c)^(b&c)))|0; h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0; }
+    H=H.map((x,i)=>(x+[a,b,c,d,e,f,g,h][i])|0); }
+  const out=new Uint8Array(32); H.forEach((x,i)=>new DataView(out.buffer).setUint32(i*4,x)); return out;
+}
+const toBytes = d => d instanceof NodeBuffer ? d.bytes : new TextEncoder().encode(String(d));
+function hmac(key,msg){ let k=toBytes(key); if(k.length>64) k=sha256(k); const kk=new Uint8Array(64); kk.set(k); const ip=kk.map(b=>b^0x36), op=kk.map(b=>b^0x5c); const inner=sha256(new Uint8Array([...ip,...msg])); return sha256(new Uint8Array([...op,...inner])); }
+const crypto = {
+  createHash(alg){ if(alg!=='sha256') throw new Error(`Simülatör yalnızca 'sha256' destekler (istenen: ${alg})`); let chunks=[]; const h={ update(d){ chunks.push(...toBytes(d)); return h; }, digest(e){ const b=Buffer.from(sha256(new Uint8Array(chunks))); return e?b.toString(e):b; } }; return h; },
+  createHmac(alg,key){ let chunks=[]; const h={ update(d){ chunks.push(...toBytes(d)); return h; }, digest(e){ const b=Buffer.from(hmac(key,new Uint8Array(chunks))); return e?b.toString(e):b; } }; return h; },
+  randomUUID:()=>{ if(self.crypto.randomUUID) return self.crypto.randomUUID(); const b=self.crypto.getRandomValues(new Uint8Array(16)); b[6]=(b[6]&15)|64; b[8]=(b[8]&63)|128; const h=[...b].map(x=>x.toString(16).padStart(2,'0')).join(''); return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`; },
+  randomBytes:n=>Buffer.from(self.crypto.getRandomValues(new Uint8Array(n))),
+  randomInt:(a,b)=>{ if(b===undefined){b=a;a=0;} return a+Math.floor(Math.random()*(b-a)); },
+  timingSafeEqual:(a,b)=>a.equals(b),
+};
+
+// ---------- http ----------
+let SERVERS = {};
+const STATUS = {200:'OK',201:'Created',204:'No Content',301:'Moved Permanently',302:'Found',400:'Bad Request',401:'Unauthorized',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',500:'Internal Server Error'};
+const http = {
+  STATUS_CODES: STATUS,
+  createServer(handler){
+    const srv = new EventEmitter();
+    if (handler) srv.on('request', handler);
+    srv.listen = (port, host, cb)=>{ if(typeof host==='function') cb=host; srv.port=port; SERVERS[port]=srv; queueMicrotask(()=>{ srv.emit('listening'); cb&&cb(); }); return srv; };
+    srv.close = cb=>{ delete SERVERS[srv.port]; setTimeout(()=>{ srv.emit('close'); cb&&cb(); },0); };
+    srv.address = ()=>({ port:srv.port, address:'::', family:'IPv6' });
+    return srv;
+  }
+};
+async function simFetch(url, opt={}){
+  await new Promise(r=>setTimeout(r,0)); // listen callback'leri önce çalışsın
+  const u = new URL(url);
+  if (!['localhost','127.0.0.1'].includes(u.hostname)) throw new Error('Simülatörde fetch yalnızca kendi sunucularınıza (http://localhost:PORT) gider.');
+  const srv = SERVERS[u.port||80];
+  if (!srv) { const e=new TypeError('fetch failed'); e.cause={code:'ECONNREFUSED',message:`connect ECONNREFUSED 127.0.0.1:${u.port}`}; throw e; }
+  return new Promise((resolve)=>{
+    const req = new EventEmitter();
+    req.method=(opt.method||'GET').toUpperCase(); req.url=u.pathname+u.search;
+    req.headers=Object.fromEntries(Object.entries(opt.headers||{}).map(([k,v])=>[k.toLowerCase(),v])); req.headers.host=u.host;
+    req[Symbol.asyncIterator] = async function*(){ if(opt.body) yield Buffer.from(opt.body); };
+    const res = new EventEmitter(); const hdr={}; let body=''; res.statusCode=200; res.headersSent=false;
+    res.setHeader=(k,v)=>{ hdr[k.toLowerCase()]=String(v); return res; }; res.getHeader=k=>hdr[k.toLowerCase()];
+    res.writeHead=(c,m,h)=>{ res.statusCode=c; if(typeof m==='object') h=m; Object.entries(h||{}).forEach(([k,v])=>res.setHeader(k,v)); res.headersSent=true; return res; };
+    res.write=c=>{ body+=String(c); return true; };
+    res.end=c=>{ if(c!==undefined) body+=String(c); res.writableEnded=true; res.emit('finish');
+      resolve({ ok:res.statusCode<400, status:res.statusCode, statusText:STATUS[res.statusCode]||'', headers:{ get:k=>hdr[k.toLowerCase()]??null, entries:()=>Object.entries(hdr) },
+        text:async()=>body, json:async()=>JSON.parse(body) }); };
+    try { srv.emit('request', req, res); } catch(e){ term(format(e.stack||e),'e'); res.statusCode=500; res.end('Internal Server Error'); }
+    setTimeout(()=>{ if(opt.body) req.emit('data', Buffer.from(opt.body)); req.emit('end'); },0);
+  });
+}
+
+// ---------- terminal + çalıştırıcı ----------
+const outEl = document.getElementById('out');
+let OUTPUT = '';
+let QUIET = false, LAST_ERR = null;
+function term(text, cls){ OUTPUT += text+'\n'; if(QUIET) return; const s=document.createElement('span'); if(cls) s.className=cls; s.textContent=text+'\n'; outEl.appendChild(s); outEl.scrollTop=outEl.scrollHeight; }
+
+// Kullanıcı kodu ayrı bir realm'de (gizli iframe) çalışır; böylece bu sayfanın
+// değişkenleri (fs, http, L…) require edilmeden görünmez — gerçek Node gibi.
+let _realm = null;
+function sandboxRealm(){ if(!_realm){ const f=document.createElement('iframe'); f.style.display='none'; document.body.appendChild(f); _realm=f.contentWindow; } return _realm; }
+const tag = v => Object.prototype.toString.call(v).slice(8,-1);
+let runId = 0, timers = new Set(), intervals = new Set();
+function stopAll(){ timers.forEach(clearTimeout); intervals.forEach(clearInterval); timers.clear(); intervals.clear(); SERVERS={}; }
+
+async function runCode(code, opts={}){
+  const maxWait = opts.maxWait || 15000;
+  stopAll(); resetVFS(); OUTPUT=''; LAST_ERR=null; if(!QUIET) outEl.innerHTML=''; const my=++runId;
+  const statusEl=document.getElementById('status'); statusEl.textContent='çalışıyor…';
+  const t0=performance.now();
+  const alive = ()=>my===runId;
+  const con = {
+    log:(...a)=>alive()&&term(format(...a)), info:(...a)=>alive()&&term(format(...a),'i'), debug:(...a)=>alive()&&term(format(...a),'s'),
+    warn:(...a)=>alive()&&term(format(...a),'w'), error:(...a)=>alive()&&term(format(...a),'e'),
+    table:(d)=>{ if(!alive())return; const rows=Array.isArray(d)?d:Object.values(d), idx=Array.isArray(d)?d.map((_,i)=>i):Object.keys(d); const cols=[...new Set(rows.flatMap(r=>typeof r==='object'?Object.keys(r):['Values']))]; const data=rows.map((r,i)=>[String(idx[i]),...cols.map(c=>typeof r==='object'?inspect(r[c]??'',1):c==='Values'?inspect(r,1):'')]); const head=['(index)',...cols]; const w=head.map((h,i)=>Math.max(h.length,...data.map(r=>r[i].length))+2); const line=(a,b,c)=>a+w.map(x=>'─'.repeat(x)).join(b)+c; const row=r=>'│'+r.map((x,i)=>x.padStart(Math.ceil((w[i]+x.length)/2)).padEnd(w[i])).join('│')+'│'; term([line('┌','┬','┐'),row(head),line('├','┼','┤'),...data.map(row),line('└','┴','┘')].join('\n')); },
+    time:(l='default')=>{ con._t[l]=performance.now(); }, timeEnd:(l='default')=>{ alive()&&term(`${l}: ${(performance.now()-con._t[l]).toFixed(3)}ms`); }, _t:{},
+    count:(l='default')=>{ con._c[l]=(con._c[l]||0)+1; term(`${l}: ${con._c[l]}`); }, _c:{},
+    group:(...a)=>a.length&&term(format(...a)), groupEnd:()=>{}, dir:(o)=>term(inspect(o)), assert:(c,...a)=>{ if(!c) term('Assertion failed'+(a.length?': '+format(...a):''),'e'); },
+  };
+  const proc = new EventEmitter();
+  Object.assign(proc, {
+    argv:['/usr/local/bin/node','/proje/index.js'], env:{ NODE_ENV:'development', PORT:'3000', USER:'ogrenci', HOME:'/home/ogrenci' },
+    platform:'linux', version:'v22.11.0', versions:{node:'22.11.0',v8:'12.4.254.21'}, pid:4242, arch:'x64', exitCode:0,
+    cwd:()=>'/proje', uptime:()=>(performance.now()-t0)/1000,
+    memoryUsage:()=>({ rss:48_000_000+Math.round(Math.random()*1e6), heapTotal:6_000_000, heapUsed:4_200_000+Math.round(Math.random()*1e5), external:1_000_000 }),
+    hrtime: Object.assign(p=>{ const n=performance.now()*1e6; const s=[Math.floor(n/1e9), Math.floor(n%1e9)]; if(p){ let d=[s[0]-p[0],s[1]-p[1]]; if(d[1]<0){d[0]--;d[1]+=1e9;} return d;} return s; }, { bigint:()=>BigInt(Math.round(performance.now()*1e6)) }),
+    nextTick:(f,...a)=>queueMicrotask(()=>f(...a)),
+    exit:(c=0)=>{ proc.exitCode=c; proc.emit('exit',c); throw { __exit:true, code:c }; },
+    stdout:{ write:s=>{ alive()&&term(String(s).replace(/\n$/,'')); return true; } }, stderr:{ write:s=>{ alive()&&term(String(s).replace(/\n$/,''),'e'); return true; } },
+  });
+  const _setTimeout=(f,ms,...a)=>{ const id=setTimeout(()=>{ timers.delete(id); if(alive()) safe(()=>f(...a)); },ms); timers.add(id); return { ref(){return this;}, unref(){return this;}, hasRef:()=>true, [Symbol.toPrimitive]:()=>id, _id:id }; };
+  const _clear=t=>{ const id=t&&t._id!==undefined?t._id:t; clearTimeout(id); clearInterval(id); timers.delete(id); intervals.delete(id); };
+  const _setInterval=(f,ms,...a)=>{ const id=setInterval(()=>{ if(alive()) safe(()=>f(...a)); },ms); intervals.add(id); return { ref(){return this;}, unref(){return this;}, _id:id }; };
+  const _setImmediate=(f,...a)=>_setTimeout(f,0,...a);
+  schedule = _setTimeout;
+  const timersP = { setTimeout:(ms,v)=>new Promise(r=>_setTimeout(()=>r(v),ms)), setImmediate:v=>new Promise(r=>_setImmediate(()=>r(v))) };
+  const modules = { fs, 'fs/promises':fsPromises, path, events:EventEmitter, util, os, http, crypto, buffer:{Buffer}, stream, 'stream/promises':stream.promises, timers:{setTimeout:_setTimeout,setInterval:_setInterval,clearTimeout:_clear}, 'timers/promises':timersP, process:proc, assert: Object.assign((c,m)=>{ if(!c) throw Object.assign(new Error(m||'Assertion failed'),{name:'AssertionError'}); }, { strictEqual:(a,b,m)=>{ if(a!==b) throw Object.assign(new Error(m||`Expected values to be strictly equal:\n\n${inspect(a,1)} !== ${inspect(b,1)}`),{name:'AssertionError'}); }, deepStrictEqual:(a,b,m)=>{ if(JSON.stringify(a)!==JSON.stringify(b)) throw Object.assign(new Error(m||'Expected values to be strictly deep-equal'),{name:'AssertionError'}); }, throws:(f)=>{ try{f();}catch{return;} throw new Error('Missing expected exception.'); } }) };
+  const req = name=>{ const n=String(name).replace(/^node:/,''); if(n in modules) return modules[n];
+    const e=new Error(`Cannot find module '${name}'\nRequire stack:\n- /proje/index.js\n\n💡 Bu laboratuvarda npm paketleri yok; yalnızca çekirdek modüller: ${Object.keys(modules).join(', ')}`); e.code='MODULE_NOT_FOUND'; throw e; };
+  function safe(f){ try{ const r=f(); if(r&&r.catch) r.catch(report); }catch(e){ report(e); } }
+  function report(e){ if(!alive()) return; if(e&&e.__exit) return; LAST_ERR = LAST_ERR || e;if(proc.listenerCount('uncaughtException')) return proc.emit('uncaughtException',e); term(cleanStack(e),'e'); proc.exitCode=1; }
+  const onRej = ev=>{ if(!alive()) return; ev.preventDefault(); if(proc.listenerCount('unhandledRejection')) return proc.emit('unhandledRejection',ev.reason); term(cleanStack(ev.reason),'e'); };
+  window.onunhandledrejection = onRej; sandboxRealm().onunhandledrejection = onRej;
+
+  // ESM import desteği: import x from 'y' → const x = require('y')
+  let src = code
+    .replace(/^\s*import\s+(\w+)\s*,\s*\{([^}]+)\}\s*from\s*['"]([^'"]+)['"];?/gm, (m,d,n,s)=>`const ${d} = __imp(${JSON.stringify(s)}); const {${n.replace(/\bas\b/g,':')}} = require(${JSON.stringify(s)});`)
+    .replace(/^\s*import\s+\*\s+as\s+(\w+)\s+from\s*['"]([^'"]+)['"];?/gm, (m,n,s)=>`const ${n} = require(${JSON.stringify(s)});`)
+    .replace(/^\s*import\s+\{([^}]+)\}\s*from\s*['"]([^'"]+)['"];?/gm, (m,n,s)=>`const {${n.replace(/\bas\b/g,':')}} = require(${JSON.stringify(s)});`)
+    .replace(/^\s*import\s+(\w+)\s+from\s*['"]([^'"]+)['"];?/gm, (m,n,s)=>`const ${n} = __imp(${JSON.stringify(s)});`)
+    .replace(/^\s*export\s+default\s+/gm,'module.exports.default = ')
+    .replace(/^\s*export\s+(const|let|function|class|async function)\s+(\w+)/gm, (m,k,n)=>`${k} ${n}`);
+  const module = { exports:{} };
+  const params = { require:req, __imp:s=>req(s), module, exports:module.exports, __dirname:'/proje', __filename:'/proje/index.js', console:con, process:proc, Buffer, fetch:simFetch,
+    setTimeout:_setTimeout, setInterval:_setInterval, setImmediate:_setImmediate, clearTimeout:_clear, clearInterval:_clear, clearImmediate:_clear, global:{}, globalThis:{}, window:undefined, document:undefined };
+  params.global = params.globalThis = Object.assign({}, params);
+  try {
+    const AsyncFn = sandboxRealm().Function('return (async function(){}).constructor')();
+    const fn = new AsyncFn(...Object.keys(params), '"use strict";\n'+src);
+    await fn(...Object.values(params));
+  } catch(e){ report(e); }
+  // bekleyen zamanlayıcı/sunucu kalmayana kadar "process" yaşar
+  const waitStart=performance.now();
+  while (alive() && (timers.size || (performance.now()-waitStart<60 ))) { await new Promise(r=>setTimeout(r,20)); if(performance.now()-waitStart>maxWait){ term(`\n[Laboratuvar] ${maxWait/1000} sn sınırı aşıldı, zamanlayıcılar durduruldu.`,'w'); stopAll(); } }
+  if (!alive()) return;
+  if (QUIET) { stopAll(); return OUTPUT; }
+  const live = Object.keys(SERVERS).length || intervals.size;
+  statusEl.textContent = live ? `🟢 süreç açık (${Object.keys(SERVERS).length?'sunucu: '+Object.keys(SERVERS).join(','):'setInterval'}) — Çalıştır'a basınca durur` : `çıkış kodu ${proc.exitCode} · ${Math.round(performance.now()-t0)}ms`;
+  if (!live) proc.emit('exit', proc.exitCode);
+  checkTask();
+  return OUTPUT;
+}
+function cleanStack(e){
+  if (tag(e)!=='Error') return 'Uncaught '+inspect(e,1);
+  const extra = Object.keys(e).filter(k=>!['stack','message'].includes(k));
+  let s = `${e.stack && e.stack.startsWith(e.name) ? e.name+': '+e.message : e.name+': '+e.message}\n    at /proje/index.js`;
+  if (extra.length) s += ' {\n'+extra.map(k=>`  ${k}: ${inspect(e[k],1)}`).join(',\n')+'\n}';
+  return s;
+}
+</script>
+
+<script>
+/* =====================================================================
+   DERSLER
+   ===================================================================== */
+const L = [];
+const lesson = (level, id, title, html, code, extra={}) => L.push({ level, id, title, html, code: code.trim()+'\n', ...extra });
+
+// ------------------------- BAŞLANGIÇ -------------------------
+lesson('Başlangıç','giris','Node.js nedir?', `
+<p><b>Node.js</b>, JavaScript'i tarayıcı dışında — sunucuda, terminalde, kendi bilgisayarında — çalıştırmanı sağlayan bir <b>çalışma ortamıdır (runtime)</b>. Google'ın <b>V8</b> motorunu kullanır ve buna dosya sistemi, ağ, süreç gibi işletim sistemi yetenekleri ekler.</p>
+<h3>Neden bu kadar popüler?</h3>
+<ul>
+<li><b>Tek dil:</b> Ön yüz ve arka yüz aynı dil — JavaScript/TypeScript.</li>
+<li><b>Engellemeyen G/Ç (non-blocking I/O):</b> Tek iş parçacığıyla binlerce eşzamanlı bağlantıyı idare eder.</li>
+<li><b>npm:</b> Dünyanın en büyük paket ekosistemi (2+ milyon paket).</li>
+</ul>
+<h3>Tarayıcı JS'i ile farkı</h3>
+<pre><code>Tarayıcı            Node.js
+─────────           ─────────
+window, document    global, process
+DOM, fetch          fs, http, path, os
+&lt;script&gt;           require / import</code></pre>
+<div class="note">👉 Sağdaki <b>Laboratuvar</b> gerçek bir Node ortamını simüle eder. Kodu değiştir, <b>▶ Çalıştır</b>'a bas (veya <kbd>Ctrl+Enter</kbd>). Hiçbir kurulum gerekmez.</div>
+<div class="task" data-task>🎯 <b>Görev:</b> Koda kendi adını yazdırdığın bir satır ekle: <code>console.log("Ben Gökhan")</code> gibi — çıktıda <code>Ben</code> kelimesi geçmeli.</div>
+`, `
+// İlk Node.js programın!
+console.log("Merhaba Node.js! 👋");
+
+console.log("Node sürümü:", process.version);
+console.log("Platform:", process.platform);
+console.log("Çalışma dizini:", process.cwd());
+
+// Tarayıcıda 'window' vardır, Node'da yoktur:
+console.log("window tanımlı mı?", typeof window !== "undefined");
+`, { check: o => /Ben\s+\S+/.test(o), quiz:{ q:'Node.js aslında nedir?', a:['Bir programlama dili','JavaScript için bir çalışma ortamı (runtime)','Bir veritabanı','Bir tarayıcı eklentisi'], c:1 } });
+
+lesson('Başlangıç','modern-js','Modern JavaScript temelleri', `
+<p>Node öğrenmeden önce, her gün kullanacağın modern JS özelliklerini tazeleyelim.</p>
+<h3>Değişkenler</h3>
+<p><code>const</code> (yeniden atanamaz) ve <code>let</code> (değişebilir) kullan; <code>var</code> kullanma.</p>
+<h3>Ok fonksiyonları, şablon metinler, destructuring</h3>
+<pre><code>const topla = (a, b) =&gt; a + b;
+const { ad, yas } = kullanici;
+const [ilk, ...kalan] = dizi;
+console.log(\`Merhaba \${ad}\`);</code></pre>
+<h3>Dizi metotları</h3>
+<p><code>map</code>, <code>filter</code>, <code>reduce</code>, <code>find</code> — Node kodunda veri işlemenin temeli.</p>
+<h3>Optional chaining & nullish</h3>
+<p><code>user?.adres?.sehir ?? "bilinmiyor"</code></p>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>urunler</code> dizisindeki fiyatların toplamını <code>reduce</code> ile hesaplayıp <code>Toplam: 1350</code> şeklinde yazdır.</div>
+`, `
+const urunler = [
+  { ad: "Klavye", fiyat: 450, stok: 3 },
+  { ad: "Mouse",  fiyat: 200, stok: 0 },
+  { ad: "Monitör", fiyat: 700, stok: 5 },
+];
+
+// map: dönüştür
+const adlar = urunler.map(u => u.ad);
+console.log(adlar);
+
+// filter: süz
+const stoktakiler = urunler.filter(u => u.stok > 0);
+console.log("Stokta:", stoktakiler.length);
+
+// destructuring + template literal
+const [{ ad, fiyat }] = urunler;
+console.log(\`İlk ürün: \${ad} (\${fiyat} TL)\`);
+
+// optional chaining
+const ayar = { db: { host: "localhost" } };
+console.log(ayar.db?.port ?? 5432);
+
+// TODO: reduce ile toplam fiyatı hesapla
+`, { check: o => /Toplam:\s*1350/.test(o) });
+
+lesson('Başlangıç','moduller','Modüller: require & import', `
+<p>Node'da her dosya bir <b>modüldür</b>. Kodunu parçalara ayırır, ihtiyacın olanı içe aktarırsın.</p>
+<h3>CommonJS (klasik)</h3>
+<pre><code>// matematik.js
+module.exports = { topla: (a,b) =&gt; a+b };
+// index.js
+const { topla } = require('./matematik');</code></pre>
+<h3>ES Modules (modern)</h3>
+<pre><code>// package.json içinde "type": "module" olmalı
+import { topla } from './matematik.js';
+export const carp = (a,b) =&gt; a*b;</code></pre>
+<h3>Çekirdek modüller</h3>
+<p>Node ile birlikte gelir, kurulum gerekmez: <code>fs</code>, <code>path</code>, <code>http</code>, <code>events</code>, <code>os</code>, <code>crypto</code>, <code>util</code>, <code>stream</code>… Modern yazımda <code>node:</code> önekiyle çağırmak önerilir: <code>require('node:fs')</code>.</p>
+<div class="note warn">⚠️ Laboratuvar tek dosyalıdır; çekirdek modülleri <code>require</code> veya <code>import</code> ile kullanabilirsin. npm paketleri (express vb.) burada yoktur — son derste gerçek kuruluma geçiş anlatılıyor.</div>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>os</code> modülünü <b>import</b> sözdizimiyle içe aktar ve <code>os.hostname()</code> değerini yazdır.</div>
+`, `
+// CommonJS
+const os = require("node:os");
+console.log("İşletim sistemi:", os.type(), os.arch());
+console.log("CPU sayısı:", os.cpus().length);
+
+// ES Module sözdizimi de çalışır:
+import { join } from "node:path";
+console.log(join("/proje", "src", "app.js"));
+
+// Kendi modülünü dışa aktarmak:
+module.exports = { selam: ad => \`Selam \${ad}\` };
+console.log(module.exports.selam("Node"));
+
+// Olmayan bir paket istersek:
+try { require("lodash"); } catch (e) { console.log("Hata kodu:", e.code); }
+`, { check: (o,c) => /import\s+.*os.*from/.test(c) && /node-akademi/.test(o) });
+
+lesson('Başlangıç','process','process ve global nesneler', `
+<p><code>process</code> nesnesi çalışan Node sürecini temsil eder; her yerde erişilebilir.</p>
+<ul>
+<li><code>process.argv</code> — komut satırı argümanları</li>
+<li><code>process.env</code> — ortam değişkenleri (şifreler, portlar, ayarlar)</li>
+<li><code>process.exit(kod)</code> — süreci sonlandırır (0 = başarılı)</li>
+<li><code>process.memoryUsage()</code>, <code>process.uptime()</code></li>
+<li><code>process.on('exit', ...)</code> — olay dinleme</li>
+</ul>
+<p>Diğer global değerler: <code>__dirname</code>, <code>__filename</code> (CommonJS), <code>setTimeout</code>, <code>Buffer</code>, <code>console</code>.</p>
+<div class="note">💡 <b>12-Factor kuralı:</b> Yapılandırmayı koda gömme, <code>process.env</code> ile oku. Örn: <code>const port = process.env.PORT || 3000</code></div>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>process.env.NODE_ENV</code> değerini okuyup <code>Ortam: development</code> yazdır.</div>
+`, `
+console.log("argv:", process.argv);
+console.log("Dosya:", __filename);
+console.log("Klasör:", __dirname);
+
+const PORT = process.env.PORT || 8080;
+console.log("Port:", PORT);
+
+const mb = n => (n / 1024 / 1024).toFixed(1) + " MB";
+const m = process.memoryUsage();
+console.log("Bellek (heap):", mb(m.heapUsed));
+
+process.on("exit", (kod) => {
+  console.log("Süreç bitiyor, çıkış kodu:", kod);
+});
+`, { check: o => /Ortam:\s*development/.test(o) });
+
+lesson('Başlangıç','path','path modülü', `
+<p>Dosya yollarını elle birleştirmek hataya açıktır (Windows <code>\\</code>, Linux <code>/</code> kullanır). <code>path</code> modülü bunu platformdan bağımsız yapar.</p>
+<table style="border-collapse:collapse">
+<tr><td><code>path.join()</code></td><td>Parçaları birleştirir, normalize eder</td></tr>
+<tr><td><code>path.resolve()</code></td><td>Mutlak yol üretir</td></tr>
+<tr><td><code>path.basename()</code></td><td>Dosya adı</td></tr>
+<tr><td><code>path.extname()</code></td><td>Uzantı</td></tr>
+<tr><td><code>path.parse()</code></td><td>Tüm parçalar bir nesnede</td></tr>
+</table>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>"/proje/resimler/kedi.png"</code> yolunun uzantısını <code>path.extname</code> ile yazdır (<code>.png</code>).</div>
+`, `
+const path = require("path");
+
+console.log(path.join(__dirname, "public", "../views", "index.html"));
+console.log(path.resolve("veri", "kullanicilar.json"));
+console.log(path.basename("/a/b/rapor.pdf"));
+console.log(path.basename("/a/b/rapor.pdf", ".pdf"));
+console.log(path.dirname("/a/b/rapor.pdf"));
+console.log(path.parse("/home/ogrenci/notlar.txt"));
+`, { check: o => /^\.png$/m.test(o) });
+
+lesson('Başlangıç','fs-sync','Dosya sistemi (fs) — senkron', `
+<p><code>fs</code> modülü dosya okuma/yazma işlemleri yapar. <code>...Sync</code> ile biten fonksiyonlar <b>senkron</b> çalışır: iş bitene kadar programı bekletir.</p>
+<pre><code>fs.readFileSync(yol, 'utf8')
+fs.writeFileSync(yol, veri)
+fs.appendFileSync(yol, veri)
+fs.existsSync(yol)
+fs.readdirSync(klasor)
+fs.mkdirSync(klasor, { recursive: true })</code></pre>
+<div class="note warn">⚠️ Senkron fonksiyonlar başlangıç betiklerinde, CLI araçlarında uygundur. Ama bir <b>web sunucusunda</b> istek işlerken kullanma — tüm kullanıcıları bekletir!</div>
+<p>Laboratuvarda <code>/proje</code> altında sanal dosyalar var: <code>merhaba.txt</code>, <code>veri.json</code>, <code>log.txt</code>. Her çalıştırmada sıfırlanır.</p>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>notlar.txt</code> adında bir dosya oluştur, içine bir şey yaz, ardından <code>readdirSync</code> ile listede göründüğünü yazdır.</div>
+`, `
+const fs = require("fs");
+
+// Okuma
+const metin = fs.readFileSync("merhaba.txt", "utf8");
+console.log(metin);
+
+// JSON okuma + parse
+const veri = JSON.parse(fs.readFileSync("/proje/veri.json", "utf8"));
+console.log(veri.kullanicilar.map(k => k.ad));
+
+// Yazma
+fs.writeFileSync("cikti.txt", "Bu satırı Node yazdı\\n");
+fs.appendFileSync("cikti.txt", "Bu da eklendi\\n");
+console.log(fs.readFileSync("cikti.txt", "utf8"));
+
+// Klasör içeriği
+console.log(fs.readdirSync("/proje"));
+
+// Hata yönetimi
+try {
+  fs.readFileSync("olmayan.txt");
+} catch (err) {
+  console.error("Hata:", err.code);
+}
+`, { check: o => /notlar\.txt/.test(o) });
+
+// ------------------------- ORTA -------------------------
+lesson('Orta','callback','Asenkron programlama & callback', `
+<p>Node'un kalbi <b>asenkron</b> çalışmadır. Bir dosya okunurken veya ağdan cevap beklenirken Node <b>beklemez</b>, başka işlere devam eder; iş bitince sana haber verir.</p>
+<h3>Callback deseni (error-first)</h3>
+<pre><code>fs.readFile('a.txt', 'utf8', (err, data) =&gt; {
+  if (err) return console.error(err);
+  console.log(data);
+});</code></pre>
+<p>Node konvansiyonu: callback'in <b>ilk argümanı her zaman hata</b>dır (yoksa <code>null</code>).</p>
+<h3>Callback cehennemi</h3>
+<pre><code>a(() =&gt; { b(() =&gt; { c(() =&gt; { d(() =&gt; { ... }) }) }) })</code></pre>
+<p>İç içe callback'ler okunamaz hale gelir. Çözüm: <b>Promise</b> ve <b>async/await</b> (sonraki ders).</p>
+<div class="task" data-task>🎯 <b>Görev:</b> Kodu çalıştır ve çıktı sırasını incele. Sonra <code>log.txt</code> dosyasını da <code>fs.readFile</code> ile okuyup satır sayısını <code>Satır: 5</code> olarak yazdır.</div>
+`, `
+const fs = require("fs");
+
+console.log("1. Okuma başlıyor");
+
+fs.readFile("merhaba.txt", "utf8", (err, data) => {
+  if (err) return console.error("Hata:", err.message);
+  console.log("3. Dosya geldi:", data.split("\\n")[0]);
+});
+
+console.log("2. Ben beklemeden çalıştım!");
+
+setTimeout(() => console.log("4. 100ms sonra"), 100);
+
+// Hatalı durum
+fs.readFile("yok.txt", "utf8", (err, data) => {
+  if (err) console.log("Beklenen hata:", err.code);
+});
+`, { check: o => /Satır:\s*5/.test(o), quiz:{ q:'Node callback konvansiyonunda ilk argüman nedir?', a:['Sonuç verisi','Hata nesnesi (veya null)','Dosya adı','Callback fonksiyonu'], c:1 } });
+
+lesson('Orta','async','Promise & async/await', `
+<p><b>Promise</b>, gelecekte tamamlanacak bir işin temsilidir: <code>pending → fulfilled</code> veya <code>rejected</code>.</p>
+<pre><code>const p = new Promise((resolve, reject) =&gt; { ... });
+p.then(sonuc =&gt; ...).catch(hata =&gt; ...);</code></pre>
+<p><b>async/await</b>, Promise'leri senkron kod gibi okunabilir yazmanı sağlar:</p>
+<pre><code>async function calis() {
+  try {
+    const veri = await oku();
+  } catch (e) { ... }
+}</code></pre>
+<h3>Paralel çalıştırma</h3>
+<ul>
+<li><code>Promise.all([...])</code> — hepsi bitince, biri hata verirse hepsi düşer</li>
+<li><code>Promise.allSettled([...])</code> — her birinin sonucunu ayrı verir</li>
+<li><code>Promise.race([...])</code> — ilk biten kazanır (timeout için ideal)</li>
+</ul>
+<div class="note">💡 Laboratuvarda (ve Node ES modüllerinde) <b>top-level await</b> kullanabilirsin.</div>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>Promise.race</code> ile <code>bekle(500)</code> ve 100 ms'de reject olan bir zaman aşımı yarıştır; hatayı yakalayıp <code>Zaman aşımı</code> yazdır.</div>
+`, `
+const bekle = (ms) => new Promise(res => setTimeout(() => res(ms), ms));
+
+async function kullaniciGetir(id) {
+  await bekle(50);
+  if (id < 0) throw new Error("Geçersiz id");
+  return { id, ad: "Kullanıcı " + id };
+}
+
+// Sıralı
+console.time("sıralı");
+const a = await kullaniciGetir(1);
+const b = await kullaniciGetir(2);
+console.timeEnd("sıralı");
+
+// Paralel — çok daha hızlı!
+console.time("paralel");
+const hepsi = await Promise.all([1, 2, 3].map(kullaniciGetir));
+console.timeEnd("paralel");
+console.log(hepsi);
+
+// Hata yakalama
+try {
+  await kullaniciGetir(-1);
+} catch (e) {
+  console.error("Yakalandı:", e.message);
+}
+
+const sonuclar = await Promise.allSettled([kullaniciGetir(5), kullaniciGetir(-5)]);
+console.log(sonuclar.map(s => s.status));
+`, { check: o => /Zaman aşımı/i.test(o) });
+
+lesson('Orta','fs-promises','fs/promises ile modern dosya işlemleri', `
+<p>Gerçek projelerde dosya işlemlerini <code>fs/promises</code> + <code>async/await</code> ile yazarsın. Sunucuyu bloklamaz, okunması kolaydır.</p>
+<pre><code>import { readFile, writeFile } from 'node:fs/promises';
+const icerik = await readFile('a.txt', 'utf8');</code></pre>
+<h3>Örnek: Basit JSON veritabanı</h3>
+<p>Sağdaki kod, küçük bir "JSON dosya veritabanı" yazar: okuma, ekleme, kaydetme.</p>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>sil(id)</code> fonksiyonu yaz; id'si 1 olan kullanıcıyı silip kalanları yazdır. Çıktıda <code>Ayşe</code> artık son listede olmamalı ve <code>Silindi</code> yazmalı.</div>
+`, `
+import { readFile, writeFile, readdir, stat } from "node:fs/promises";
+
+const DB = "/proje/veri.json";
+
+async function oku() {
+  return JSON.parse(await readFile(DB, "utf8"));
+}
+async function kaydet(veri) {
+  await writeFile(DB, JSON.stringify(veri, null, 2));
+}
+async function ekle(ad) {
+  const db = await oku();
+  const id = Math.max(...db.kullanicilar.map(k => k.id)) + 1;
+  db.kullanicilar.push({ id, ad });
+  await kaydet(db);
+  return id;
+}
+
+const yeniId = await ekle("Zeynep");
+console.log("Eklendi, id:", yeniId);
+console.table((await oku()).kullanicilar);
+
+// Klasördeki dosyaların boyutları
+for (const ad of await readdir("/proje")) {
+  const s = await stat("/proje/" + ad);
+  console.log(ad.padEnd(14), s.size, "bayt");
+}
+`, { check: o => /Silindi/.test(o) && !/Ayşe[\s\S]*Silindi[\s\S]*Ayşe/.test(o) });
+
+lesson('Orta','events','EventEmitter: olay tabanlı mimari', `
+<p>Node'un pek çok parçası (sunucular, stream'ler, process) <b>EventEmitter</b> üzerine kuruludur. Bir nesne olay <b>yayınlar</b> (emit), diğerleri <b>dinler</b> (on).</p>
+<pre><code>const EventEmitter = require('events');
+const e = new EventEmitter();
+e.on('mesaj', m =&gt; console.log(m));
+e.emit('mesaj', 'selam');</code></pre>
+<ul>
+<li><code>on</code> — her seferinde dinle</li>
+<li><code>once</code> — sadece ilk seferde</li>
+<li><code>off</code> — dinlemeyi bırak</li>
+<li><code>'error'</code> olayı özeldir: dinleyicisi yoksa program çöker!</li>
+</ul>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>Siparis</code> sınıfına <code>'iptal'</code> olayı ekle, bir dinleyiciyle <code>Sipariş iptal edildi</code> yazdır.</div>
+`, `
+const EventEmitter = require("events");
+
+class Siparis extends EventEmitter {
+  olustur(urun, adet) {
+    const no = Math.floor(Math.random() * 9000) + 1000;
+    this.emit("olusturuldu", { no, urun, adet });
+    setTimeout(() => this.emit("kargolandi", no), 200);
+  }
+}
+
+const s = new Siparis();
+
+s.on("olusturuldu", (sip) => console.log("📦 Yeni sipariş:", sip));
+s.on("olusturuldu", (sip) => console.log("📧 E-posta gönderildi:", sip.no));
+s.once("kargolandi", (no) => console.log("🚚 Kargoya verildi:", no));
+
+s.olustur("Laptop", 1);
+
+// error olayı
+s.on("error", (err) => console.error("Hata yakalandı:", err.message));
+s.emit("error", new Error("Stok yetersiz"));
+
+console.log("Dinleyici sayısı:", s.listenerCount("olusturuldu"));
+`, { check: o => /Sipariş iptal edildi/.test(o) });
+
+lesson('Orta','buffer','Buffer: ikili (binary) veri', `
+<p>JavaScript metinlerle iyidir ama dosyalar, resimler, ağ paketleri <b>ham baytlardır</b>. Node bunun için <b>Buffer</b> sunar.</p>
+<pre><code>Buffer.from('Merhaba')         // metinden
+Buffer.alloc(10)               // 10 baytlık sıfır
+buf.toString('base64')         // kodlama dönüşümü
+Buffer.concat([b1, b2])        // birleştir</code></pre>
+<p>Kodlamalar: <code>utf8</code>, <code>hex</code>, <code>base64</code>. Türkçe karakterler UTF-8'de 2 bayt yer kaplar — bu yüzden <code>'ğ'.length</code> 1 ama bayt uzunluğu 2'dir.</p>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>"kullanici:sifre"</code> metnini base64'e çevirip <code>Basic dXNlcjpwYXNz</code> formatında bir HTTP Authorization başlığı üret (<code>Basic </code> ile başlayan bir satır yazdır).</div>
+`, `
+const buf = Buffer.from("Node ğüş");
+console.log(buf);
+console.log("Karakter:", "Node ğüş".length, "Bayt:", buf.length);
+
+console.log("hex   :", buf.toString("hex"));
+console.log("base64:", buf.toString("base64"));
+console.log("geri  :", Buffer.from(buf.toString("base64"), "base64").toString());
+
+const a = Buffer.from("Merhaba ");
+const b = Buffer.from("Dünya");
+console.log(Buffer.concat([a, b]).toString());
+
+console.log("İlk bayt:", buf[0], "→", String.fromCharCode(buf[0]));
+`, { check: o => /^Basic [A-Za-z0-9+/=]+$/m.test(o) });
+
+lesson('Orta','http','HTTP sunucusu yazmak', `
+<p>Node'un en bilinen kullanım alanı: <b>web sunucusu</b>. Hiçbir framework olmadan, sadece <code>http</code> modülüyle:</p>
+<pre><code>const http = require('http');
+http.createServer((req, res) =&gt; {
+  res.end('Merhaba');
+}).listen(3000);</code></pre>
+<ul>
+<li><code>req</code> — gelen istek: <code>method</code>, <code>url</code>, <code>headers</code></li>
+<li><code>res</code> — cevap: <code>statusCode</code>, <code>setHeader</code>, <code>write</code>, <code>end</code></li>
+</ul>
+<div class="note">🧪 Laboratuvarda gerçek bir tarayıcı sekmesi açamayız; ama <code>fetch('http://localhost:3000')</code> ile <b>kendi sunucuna istek atabilirsin</b>. Bu, gerçek Node 18+ ile birebir aynı koddur.</div>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>/saat</code> yoluna gelen isteğe şu anki saati döndüren bir dal ekle ve <code>fetch</code> ile test et. Çıktıda <code>200</code> ve <code>saat</code> geçmeli.</div>
+`, `
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  console.log(\`→ \${req.method} \${req.url}\`);
+
+  if (req.url === "/") {
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.end("<h1>Ana sayfa</h1>");
+  } else if (req.url === "/api/selam") {
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ mesaj: "Selam!", zaman: Date.now() }));
+  } else {
+    res.statusCode = 404;
+    res.end("Bulunamadı");
+  }
+});
+
+server.listen(3000, () => console.log("Sunucu http://localhost:3000 üzerinde"));
+
+// Sunucuyu test edelim
+const r1 = await fetch("http://localhost:3000/");
+console.log(r1.status, await r1.text());
+
+const r2 = await fetch("http://localhost:3000/api/selam");
+console.log(r2.status, await r2.json());
+
+const r3 = await fetch("http://localhost:3000/yok");
+console.log(r3.status, r3.statusText);
+
+server.close(() => console.log("Sunucu kapandı"));
+`, { check: o => /200/.test(o) && /saat/i.test(o) && /GET \/saat/.test(o) });
+
+lesson('Orta','rest','REST API: CRUD uygulaması', `
+<p>Gerçek bir API; kaynakları <b>HTTP metotlarıyla</b> yönetir:</p>
+<table>
+<tr><td><code>GET /gorevler</code></td><td>Listele</td></tr>
+<tr><td><code>GET /gorevler/:id</code></td><td>Tekini getir</td></tr>
+<tr><td><code>POST /gorevler</code></td><td>Oluştur (201)</td></tr>
+<tr><td><code>PUT /gorevler/:id</code></td><td>Güncelle</td></tr>
+<tr><td><code>DELETE /gorevler/:id</code></td><td>Sil (204)</td></tr>
+</table>
+<h3>İstek gövdesini (body) okumak</h3>
+<p><code>req</code> bir stream'dir; veri parça parça gelir:</p>
+<pre><code>let body = '';
+req.on('data', c =&gt; body += c);
+req.on('end', () =&gt; JSON.parse(body));</code></pre>
+<p>veya modern yöntem: <code>for await (const chunk of req)</code>.</p>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>DELETE /gorevler/1</code> desteği ekle (204 dönsün) ve test et. Çıktıda <code>204</code> geçmeli.</div>
+`, `
+const http = require("http");
+
+let gorevler = [{ id: 1, baslik: "Node öğren", bitti: false }];
+let sonId = 1;
+
+async function govdeOku(req) {
+  let body = "";
+  for await (const chunk of req) body += chunk;
+  return body ? JSON.parse(body) : {};
+}
+function json(res, kod, veri) {
+  res.writeHead(kod, { "Content-Type": "application/json" });
+  res.end(veri === undefined ? "" : JSON.stringify(veri));
+}
+
+const server = http.createServer(async (req, res) => {
+  const [, kaynak, id] = req.url.split("/");
+  if (kaynak !== "gorevler") return json(res, 404, { hata: "Yok" });
+
+  try {
+    if (req.method === "GET" && !id) return json(res, 200, gorevler);
+    if (req.method === "GET") {
+      const g = gorevler.find(x => x.id === +id);
+      return g ? json(res, 200, g) : json(res, 404, { hata: "Görev yok" });
+    }
+    if (req.method === "POST") {
+      const { baslik } = await govdeOku(req);
+      if (!baslik) return json(res, 400, { hata: "baslik zorunlu" });
+      const g = { id: ++sonId, baslik, bitti: false };
+      gorevler.push(g);
+      return json(res, 201, g);
+    }
+    if (req.method === "PUT" && id) {
+      const g = gorevler.find(x => x.id === +id);
+      if (!g) return json(res, 404, { hata: "Görev yok" });
+      Object.assign(g, await govdeOku(req));
+      return json(res, 200, g);
+    }
+    json(res, 405, { hata: "Desteklenmeyen metot" });
+  } catch (e) {
+    json(res, 500, { hata: e.message });
+  }
+});
+server.listen(4000);
+
+// ---- İstemci tarafı testler ----
+const api = async (method, url, body) => {
+  const r = await fetch("http://localhost:4000" + url, {
+    method, headers: { "Content-Type": "application/json" },
+    body: body && JSON.stringify(body),
+  });
+  const t = await r.text();
+  console.log(method.padEnd(6), url.padEnd(14), r.status, t);
+};
+
+await api("GET", "/gorevler");
+await api("POST", "/gorevler", { baslik: "API yaz" });
+await api("POST", "/gorevler", {});
+await api("PUT", "/gorevler/1", { bitti: true });
+await api("GET", "/gorevler/2");
+await api("GET", "/gorevler/99");
+
+server.close();
+`, { check: o => /DELETE.*204/.test(o) });
+
+lesson('Orta','hata','Hata yönetimi', `
+<p>Sağlam bir Node uygulaması hataları <b>öngörür ve yönetir</b>.</p>
+<h3>Hata türleri</h3>
+<ul>
+<li><b>Operasyonel:</b> dosya yok, ağ koptu, geçersiz girdi → yakala, kullanıcıya düzgün cevap ver.</li>
+<li><b>Programcı hatası:</b> <code>undefined.x</code>, yanlış tip → düzelt; süreci yeniden başlatmak en güvenlisi.</li>
+</ul>
+<h3>Özel hata sınıfları</h3>
+<pre><code>class BulunamadiHatasi extends Error {
+  constructor(m) { super(m); this.name = 'BulunamadiHatasi'; this.status = 404; }
+}</code></pre>
+<h3>Son savunma hattı</h3>
+<pre><code>process.on('uncaughtException', ...)
+process.on('unhandledRejection', ...)</code></pre>
+<div class="note warn">⚠️ <code>await</code> edilmeyen bir Promise'in hatası yakalanmaz! Node 15+ bu durumda süreci çökertir.</div>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>YetkiHatasi</code> adında, <code>status = 401</code> olan bir sınıf yaz, fırlat, yakala ve <code>401</code> yazdır.</div>
+`, `
+class UygulamaHatasi extends Error {
+  constructor(mesaj, status = 500) {
+    super(mesaj);
+    this.name = this.constructor.name;
+    this.status = status;
+  }
+}
+class DogrulamaHatasi extends UygulamaHatasi {
+  constructor(alan) { super(\`'\${alan}' alanı geçersiz\`, 400); this.alan = alan; }
+}
+
+function kayitOl({ email, sifre }) {
+  if (!email?.includes("@")) throw new DogrulamaHatasi("email");
+  if ((sifre ?? "").length < 8) throw new DogrulamaHatasi("sifre");
+  return { ok: true };
+}
+
+for (const girdi of [{ email: "x" }, { email: "a@b.c", sifre: "123" }, { email: "a@b.c", sifre: "12345678" }]) {
+  try {
+    console.log(kayitOl(girdi));
+  } catch (e) {
+    if (e instanceof DogrulamaHatasi) console.log(\`[\${e.status}] \${e.name}: \${e.message}\`);
+    else throw e;
+  }
+}
+
+// Yakalanmayan Promise hatası için son savunma
+process.on("unhandledRejection", (sebep) => {
+  console.error("Yakalanmamış red:", sebep.message);
+});
+Promise.reject(new Error("unutulmuş await"));
+`, { check: o => /401/.test(o) });
+
+// ------------------------- İLERİ -------------------------
+lesson('İleri','eventloop','Event Loop derinlemesine', `
+<p>Node tek iş parçacıklı JavaScript çalıştırır, ama <b>libuv</b> sayesinde G/Ç işlerini arka planda yapar. Sıra kimin? Event loop karar verir:</p>
+<pre><code>   ┌───────────────────────────┐
+┌─&gt;│        timers             │  setTimeout, setInterval
+│  ├───────────────────────────┤
+│  │     pending callbacks     │
+│  ├───────────────────────────┤
+│  │        poll               │  G/Ç olayları (fs, ağ)
+│  ├───────────────────────────┤
+│  │        check              │  setImmediate
+│  ├───────────────────────────┤
+└──┤     close callbacks       │
+   └───────────────────────────┘
+ Her aşama arasında: process.nextTick kuyruğu → Promise (microtask) kuyruğu</code></pre>
+<h3>Öncelik sırası (Node'da)</h3>
+<ol><li>Senkron kod</li><li><code>process.nextTick</code></li><li>Promise <code>.then</code> / <code>queueMicrotask</code></li><li><code>setTimeout(0)</code> / <code>setImmediate</code></li></ol>
+<div class="note warn">⚠️ Simülatör tarayıcının event loop'unu kullanır: <code>nextTick</code> burada bir microtask gibi davranır. Gerçek Node'da örnek çıktı: <code>1 sync, 6 sync, 3 nextTick, 2 promise, 4 timeout, 5 immediate</code>.</div>
+<h3>Event loop'u bloklamak</h3>
+<p>Ağır CPU işleri (büyük döngüler, şifreleme, resim işleme) tüm sunucuyu durdurur. Çözümler: işi parçalara bölmek, <code>worker_threads</code>, ayrı servis.</p>
+<div class="task" data-task>🎯 <b>Görev:</b> Bloklayan döngüyü <code>setImmediate</code> ile parçalara bölünmüş hale getirmeyi dene; ya da sadece kodu çalıştırıp <code>tick</code> mesajlarının neden geciktiğini gözlemle. (Çıktıda <code>blok</code> geçmesi yeterli.)</div>
+`, `
+console.log("1 sync");
+Promise.resolve().then(() => console.log("2 promise"));
+process.nextTick(() => console.log("3 nextTick"));
+setTimeout(() => console.log("4 timeout"), 0);
+setImmediate(() => console.log("5 immediate"));
+console.log("6 sync");
+
+// Event loop'u bloklamak:
+setTimeout(() => {
+  const t = Date.now();
+  const id = setInterval(() => console.log("tick", Date.now() - t, "ms"), 50);
+
+  setTimeout(() => {
+    console.log("--- 300ms'lik blok başlıyor ---");
+    const bitis = Date.now() + 300;
+    while (Date.now() < bitis) {} // CPU'yu kilitler!
+    console.log("--- blok bitti ---");
+  }, 120);
+
+  setTimeout(() => clearInterval(id), 600);
+}, 20);
+`, { check: o => /blok/.test(o), quiz:{ q:'Gerçek Node.js\'te hangisi önce çalışır?', a:['setTimeout(fn, 0)','Promise.then','process.nextTick','setImmediate'], c:2 } });
+
+lesson('İleri','streams','Streams: büyük veriyi akıtmak', `
+<p>1 GB'lık bir log dosyasını <code>readFile</code> ile okursan tamamı belleğe yüklenir. <b>Stream</b>'ler veriyi <b>parça parça (chunk)</b> işler: sabit, düşük bellek.</p>
+<ul>
+<li><b>Readable</b> — okunabilir kaynak (dosya, HTTP isteği)</li>
+<li><b>Writable</b> — yazılabilir hedef (dosya, HTTP cevabı)</li>
+<li><b>Transform</b> — akarken dönüştüren (sıkıştırma, şifreleme)</li>
+</ul>
+<pre><code>fs.createReadStream('buyuk.log')
+  .pipe(zlib.createGzip())
+  .pipe(fs.createWriteStream('buyuk.log.gz'));</code></pre>
+<p>Modern yöntem: <code>await pipeline(a, b, c)</code> — hataları ve kapanışı otomatik yönetir.</p>
+<div class="task" data-task>🎯 <b>Görev:</b> Transform'u, her satırın başına satır numarası ekleyecek şekilde değiştir. Çıktıda <code>1:</code> geçmeli.</div>
+`, `
+const fs = require("fs");
+const { Readable, Transform, pipeline } = require("stream");
+
+// 1) Dosyayı küçük parçalarla okumak
+const okuyucu = fs.createReadStream("log.txt", { encoding: "utf8", highWaterMark: 12 });
+let parca = 0;
+okuyucu.on("data", (chunk) => console.log(\`chunk #\${++parca}:\`, JSON.stringify(chunk)));
+okuyucu.on("end", () => console.log("Okuma bitti\\n"));
+
+await new Promise(r => okuyucu.on("end", r));
+
+// 2) Transform stream: büyük harfe çevir
+const buyukHarf = new Transform({
+  transform(chunk, enc, cb) {
+    cb(null, String(chunk).toUpperCase());
+  },
+});
+
+await pipeline(
+  fs.createReadStream("log.txt", { encoding: "utf8" }),
+  buyukHarf,
+  fs.createWriteStream("log-buyuk.txt")
+);
+console.log(fs.readFileSync("log-buyuk.txt", "utf8"));
+
+// 3) Async iterator ile okuma
+for await (const sayi of Readable.from([1, 2, 3])) {
+  console.log("sayı:", sayi);
+}
+`, { check: o => /^1:/m.test(o) || /\b1:\s/.test(o) });
+
+lesson('İleri','util','util: promisify ve yardımcılar', `
+<p>Eski callback tabanlı API'leri Promise'e çevirmek için <code>util.promisify</code> kullanılır. Bu, eski kütüphanelerle modern kod yazmanın anahtarıdır.</p>
+<pre><code>const oku = util.promisify(fs.readFile);
+const veri = await oku('a.txt', 'utf8');</code></pre>
+<p>Diğer yararlılar: <code>util.format</code> (printf), <code>util.inspect</code> (derin nesne gösterimi), <code>util.isDeepStrictEqual</code>, <code>util.types</code>.</p>
+<h3>Kendi promisify'ını yaz</h3>
+<p>Mülakatların gözdesi! Kodda bir örnek var.</p>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>eskiApi</code>'nin hata veren çağrısını (<code>eskiApi(-1)</code>) promisify edilmiş haliyle çağırıp <code>try/catch</code> ile yakala, <code>negatif</code> kelimesini yazdır.</div>
+`, `
+const util = require("util");
+const fs = require("fs");
+
+// Eski usul bir API
+function eskiApi(sayi, cb) {
+  setTimeout(() => {
+    if (sayi < 0) return cb(new Error("negatif sayı olmaz"));
+    cb(null, sayi * 2);
+  }, 30);
+}
+
+const yeniApi = util.promisify(eskiApi);
+console.log("Sonuç:", await yeniApi(21));
+
+// Kendi promisify'ımız:
+const benimPromisify = (fn) => (...args) =>
+  new Promise((resolve, reject) =>
+    fn(...args, (err, res) => (err ? reject(err) : resolve(res))));
+
+const oku = benimPromisify(fs.readFile);
+console.log((await oku("merhaba.txt", "utf8")).split("\\n")[0]);
+
+console.log(util.format("%s %d yaşında, %j", "Ali", 30, { aktif: true }));
+console.log(util.isDeepStrictEqual({ a: [1, 2] }, { a: [1, 2] }));
+`, { check: o => /negatif/.test(o) });
+
+lesson('İleri','crypto','crypto: hash, HMAC, rastgelelik', `
+<p>Güvenlik Node geliştiricisinin sorumluluğudur. <code>crypto</code> modülü temel araçları verir:</p>
+<ul>
+<li><b>Hash (SHA-256):</b> Tek yönlü özet. Dosya bütünlüğü, önbellek anahtarları.</li>
+<li><b>HMAC:</b> Gizli anahtarla imzalı hash. Webhook doğrulama, JWT imzası.</li>
+<li><b>randomUUID / randomBytes:</b> Kriptografik olarak güvenli rastgelelik. Token, ID üretimi.</li>
+</ul>
+<div class="note warn">⚠️ Şifreleri <b>asla</b> düz SHA-256 ile saklama! <code>crypto.scrypt</code>, bcrypt veya argon2 gibi yavaş, tuzlu (salt) algoritmalar kullan. <br>⚠️ <code>Math.random()</code> güvenlik için uygun değildir.</div>
+<div class="note">Simülatör yalnızca <code>sha256</code> destekler; gerçek Node'da <code>md5</code>, <code>sha512</code> vb. de vardır.</div>
+<div class="task" data-task>🎯 <b>Görev:</b> Basit bir "imzalı token" üret: <code>veri + "." + hmac(veri)</code>. Sonra imzayı doğrulayan bir fonksiyon yazıp <code>Geçerli: true</code> yazdır.</div>
+`, `
+const crypto = require("crypto");
+
+// SHA-256 hash
+const hash = crypto.createHash("sha256").update("merhaba").digest("hex");
+console.log("SHA-256:", hash);
+
+// Aynı girdi → aynı hash; tek harf değişince tamamen farklı
+console.log("SHA-256:", crypto.createHash("sha256").update("Merhaba").digest("hex"));
+
+// HMAC — webhook imzası doğrulama
+const GIZLI = "cok-gizli-anahtar";
+const govde = JSON.stringify({ olay: "odeme.basarili", tutar: 250 });
+const imza = crypto.createHmac("sha256", GIZLI).update(govde).digest("hex");
+console.log("İmza:", imza);
+
+// Güvenli rastgelelik
+console.log("UUID:", crypto.randomUUID());
+console.log("Token:", crypto.randomBytes(16).toString("hex"));
+`, { check: o => /Geçerli:\s*true/.test(o) });
+
+lesson('İleri','middleware','Mini Express: middleware deseni', `
+<p>Express, Koa, Fastify gibi framework'lerin kalbi <b>middleware zinciri</b>dir: her istek bir dizi fonksiyondan geçer, her biri <code>next()</code> ile sıradakine paslar.</p>
+<pre><code>app.use(logger);
+app.use(auth);
+app.get('/profil', (req, res) =&gt; ...);</code></pre>
+<p>Sağdaki kodda <b>sıfırdan, 40 satırda</b> Express benzeri bir framework yazıyoruz. Bunu anlarsan Express'i "sihir" olmaktan çıkarırsın.</p>
+<div class="task" data-task>🎯 <b>Görev:</b> İstek süresini ölçüp <code>X-Response-Time</code> başlığı ekleyen bir middleware yaz ve test cevabında bu başlığı yazdır (çıktıda <code>ms</code> geçmeli ve <code>X-Response-Time</code> kelimesi).</div>
+`, `
+const http = require("http");
+
+function mini() {
+  const katmanlar = [];
+  const app = (req, res) => {
+    const u = new URL(req.url, "http://x");
+    req.path = u.pathname;
+    req.query = Object.fromEntries(u.searchParams);
+    res.json = (v, kod = 200) => { res.writeHead(kod, { "Content-Type": "application/json" }); res.end(JSON.stringify(v)); };
+    let i = 0;
+    const next = (err) => {
+      const k = katmanlar[i++];
+      if (!k) return res.json({ hata: err?.message || "Bulunamadı" }, err ? 500 : 404);
+      if (k.method && (k.method !== req.method || !eslesir(k.path, req))) return next(err);
+      try {
+        if (err) return k.fn.length === 4 ? k.fn(err, req, res, next) : next(err);
+        if (k.fn.length === 4) return next();
+        k.fn(req, res, next);
+      } catch (e) { next(e); }
+    };
+    next();
+  };
+  const eslesir = (desen, req) => {
+    const a = desen.split("/"), b = req.path.split("/");
+    if (a.length !== b.length) return false;
+    req.params = {};
+    return a.every((p, i) => p.startsWith(":") ? (req.params[p.slice(1)] = b[i], true) : p === b[i]);
+  };
+  app.use = (fn) => katmanlar.push({ fn });
+  for (const m of ["GET", "POST", "PUT", "DELETE"])
+    app[m.toLowerCase()] = (path, fn) => katmanlar.push({ method: m, path, fn });
+  app.listen = (...a) => http.createServer(app).listen(...a);
+  return app;
+}
+
+// ---- Kullanım ----
+const app = mini();
+app.use((req, res, next) => { console.log("[log]", req.method, req.url); next(); });
+app.use((req, res, next) => {
+  if (req.path.startsWith("/admin") && req.headers["x-token"] !== "123")
+    return res.json({ hata: "Yetkisiz" }, 401);
+  next();
+});
+app.get("/kullanici/:id", (req, res) => res.json({ id: req.params.id, q: req.query }));
+app.get("/admin/panel", (req, res) => res.json({ hosgeldin: "admin" }));
+app.get("/patla", () => { throw new Error("Bir şeyler ters gitti"); });
+app.use((err, req, res, next) => res.json({ hata: err.message }, 500));
+
+const srv = app.listen(5000);
+for (const [url, h] of [["/kullanici/7?detay=1"], ["/admin/panel"], ["/admin/panel", { "x-token": "123" }], ["/patla"], ["/yok"]]) {
+  const r = await fetch("http://localhost:5000" + url, { headers: h });
+  console.log("   ←", r.status, await r.text());
+}
+srv.close();
+`, { check: o => /X-Response-Time/i.test(o) && /ms/.test(o) });
+
+lesson('İleri','test','Test yazmak: node:test & assert', `
+<p>Node 18+ yerleşik bir test çalıştırıcıyla gelir: <code>node --test</code>. Ek paket gerekmez!</p>
+<pre><code>import test from 'node:test';
+import assert from 'node:assert/strict';
+
+test('topla', () =&gt; {
+  assert.strictEqual(topla(2, 3), 5);
+});</code></pre>
+<p>Laboratuvarda <code>node:test</code> yok ama <code>assert</code> var; sağda küçük bir test çalıştırıcıyı kendimiz yazıyoruz — gerçek araçların nasıl çalıştığını görmek için harika bir egzersiz.</p>
+<h3>İyi test alışkanlıkları</h3>
+<ul><li>Her test tek bir davranışı doğrulasın</li><li>Kenar durumları (boş, negatif, null) test et</li><li>Saf (pure) fonksiyonlar en kolay test edilir — iş mantığını G/Ç'den ayır</li></ul>
+<div class="task" data-task>🎯 <b>Görev:</b> Kasıtlı olarak başarısız olan testi düzelt ki tüm testler geçsin: çıktıda <code>0 başarısız</code> yazmalı.</div>
+`, `
+const assert = require("assert");
+
+// Test edilecek kod
+function slugify(s) {
+  return s.toLowerCase()
+    .replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s")
+    .replace(/ı/g, "i").replace(/ö/g, "o").replace(/ç/g, "c")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+// Mini test çalıştırıcı
+const testler = [];
+const test = (ad, fn) => testler.push({ ad, fn });
+
+test("küçük harfe çevirir", () => assert.strictEqual(slugify("NODE"), "node"));
+test("boşlukları tire yapar", () => assert.strictEqual(slugify("merhaba dünya"), "merhaba-dunya"));
+test("Türkçe karakterler", () => assert.strictEqual(slugify("Çağrı Şükür"), "cagri-sukur"));
+test("baş/son tireleri siler", () => assert.strictEqual(slugify("  selam!  "), "selam"));
+test("kasıtlı hata", () => assert.strictEqual(slugify("A B"), "a_b"));
+
+let gecti = 0, kaldi = 0;
+for (const t of testler) {
+  try { await t.fn(); gecti++; console.log("  ✔", t.ad); }
+  catch (e) { kaldi++; console.log("  ✖", t.ad, "\\n     ", e.message.split("\\n").join(" ")); }
+}
+console.log(\`\\n\${gecti} başarılı, \${kaldi} başarısız\`);
+if (kaldi) process.exitCode = 1;
+`, { check: o => /0 başarısız/.test(o) });
+
+lesson('İleri','proje','Proje: URL kısaltıcı servisi', `
+<p>Öğrendiklerini birleştirme zamanı! Bu derste tam bir mini servis var:</p>
+<ul>
+<li>HTTP sunucusu + JSON API</li>
+<li><code>crypto</code> ile kısa kod üretimi</li>
+<li><code>fs/promises</code> ile kalıcı kayıt</li>
+<li><code>EventEmitter</code> ile istatistik</li>
+<li>Hata yönetimi ve doğrulama</li>
+<li>302 yönlendirme</li>
+</ul>
+<div class="task" data-task>🎯 <b>Görev:</b> <code>GET /istatistik</code> uç noktası ekle; tüm kısa linkleri ve tıklanma sayılarını JSON olarak döndürsün. Test edip çıktıda <code>tiklanma</code> göster.</div>
+<div class="note">Bonus: Aynı uzun URL ikinci kez gönderilirse yeni kod üretmek yerine mevcut kodu döndür.</div>
+`, `
+const http = require("http");
+const crypto = require("crypto");
+const { readFile, writeFile } = require("fs/promises");
+const EventEmitter = require("events");
+
+const DB = "/proje/linkler.json";
+const olaylar = new EventEmitter();
+const yukle = async () => { try { return JSON.parse(await readFile(DB, "utf8")); } catch { return {}; } };
+const kaydet = (d) => writeFile(DB, JSON.stringify(d, null, 2));
+
+olaylar.on("tik", (kod) => console.log(\`   📊 '\${kod}' tıklandı\`));
+
+const server = http.createServer(async (req, res) => {
+  const gonder = (kod, veri, basliklar = {}) => {
+    res.writeHead(kod, { "Content-Type": "application/json", ...basliklar });
+    res.end(veri ? JSON.stringify(veri) : "");
+  };
+  try {
+    const db = await yukle();
+    if (req.method === "POST" && req.url === "/kisalt") {
+      let body = ""; for await (const c of req) body += c;
+      const { url } = JSON.parse(body || "{}");
+      try { new URL(url); } catch { return gonder(400, { hata: "Geçerli bir URL gönder" }); }
+      const kod = crypto.randomBytes(3).toString("base64").replace(/[+/=]/g, "x");
+      db[kod] = { url, tiklanma: 0, olusturma: new Date().toISOString() };
+      await kaydet(db);
+      return gonder(201, { kisa: \`http://localhost:7000/\${kod}\`, kod });
+    }
+    const kod = req.url.slice(1);
+    if (req.method === "GET" && db[kod]) {
+      db[kod].tiklanma++; await kaydet(db);
+      olaylar.emit("tik", kod);
+      return gonder(302, null, { Location: db[kod].url });
+    }
+    gonder(404, { hata: "Böyle bir kısa link yok" });
+  } catch (e) {
+    gonder(500, { hata: e.message });
+  }
+});
+server.listen(7000, () => console.log("🔗 Kısaltıcı 7000 portunda\\n"));
+
+// ---- Demo ----
+const post = (url) => fetch("http://localhost:7000/kisalt", { method: "POST", body: JSON.stringify({ url }) });
+const r = await post("https://nodejs.org/en/learn");
+const { kod, kisa } = await r.json();
+console.log("Oluşturuldu:", r.status, kisa);
+
+for (let i = 0; i < 3; i++) {
+  const g = await fetch(kisa);
+  console.log("Yönlendirme:", g.status, "→", g.headers.get("location"));
+}
+console.log("Hatalı:", (await post("bu-url-degil")).status);
+console.log("Yok   :", (await fetch("http://localhost:7000/zzz")).status);
+console.log("\\nDisk:", await readFile(DB, "utf8"));
+server.close();
+`, { check: o => /tiklanma/.test(o) && /istatistik/i.test(o) || /"tiklanma":\s*\d+[\s\S]*\}\s*$/.test(o) && /\/istatistik/.test(o) });
+
+lesson('İleri','gercek','Gerçek dünyaya geçiş: npm, Express, üretim', `
+<p>Tebrikler! 🎉 Node'un çekirdeğini öğrendin. Şimdi kendi bilgisayarında gerçek projelere geçme zamanı.</p>
+<h3>1. Kurulum</h3>
+<pre><code># nodejs.org'dan LTS sürümünü indir, ya da sürüm yöneticisi kullan:
+# Windows: nvm-windows / fnm    macOS/Linux: nvm / fnm
+node -v
+npm -v</code></pre>
+<h3>2. Proje başlatma</h3>
+<pre><code>mkdir benim-api &amp;&amp; cd benim-api
+npm init -y                 # package.json oluşturur
+npm install express         # bağımlılık ekler (node_modules)
+npm install -D nodemon      # geliştirme bağımlılığı</code></pre>
+<h3>3. package.json</h3>
+<pre><code>{
+  "name": "benim-api",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js",
+    "test": "node --test"
+  },
+  "dependencies": { "express": "^5.0.0" }
+}</code></pre>
+<h3>4. Express ile aynı API</h3>
+<pre><code>import express from 'express';
+const app = express();
+app.use(express.json());
+app.get('/gorevler', (req, res) =&gt; res.json(gorevler));
+app.post('/gorevler', (req, res) =&gt; { ... res.status(201).json(g); });
+app.listen(process.env.PORT || 3000);</code></pre>
+<p>Mini Express dersinde yazdığın şeyin aynısı — artık nasıl çalıştığını biliyorsun.</p>
+<h3>5. Yol haritası — sırada ne var?</h3>
+<ul>
+<li><b>TypeScript</b> — tip güvenliği (Node 22+ <code>--experimental-strip-types</code> ile doğrudan çalıştırır)</li>
+<li><b>Veritabanı</b> — PostgreSQL (pg, Prisma, Drizzle), MongoDB (mongoose), Redis</li>
+<li><b>Kimlik doğrulama</b> — JWT, oturumlar, OAuth; şifreler için bcrypt/argon2</li>
+<li><b>Doğrulama</b> — zod, joi</li>
+<li><b>Framework'ler</b> — Express, Fastify, NestJS, Hono</li>
+<li><b>Gerçek zamanlı</b> — WebSocket (ws, socket.io)</li>
+<li><b>Ölçekleme</b> — <code>cluster</code>, <code>worker_threads</code>, PM2, Docker, Kubernetes</li>
+<li><b>Gözlemlenebilirlik</b> — loglama (pino), metrikler, OpenTelemetry</li>
+<li><b>Güvenlik</b> — helmet, rate limiting, CORS, <code>npm audit</code>, OWASP Top 10</li>
+</ul>
+<h3>6. Üretim kontrol listesi</h3>
+<ul>
+<li>✅ Ortam değişkenleriyle yapılandırma (.env dosyası git'e girmesin)</li>
+<li>✅ Merkezi hata yönetimi, düzgün HTTP durum kodları</li>
+<li>✅ Yapılandırılmış loglama</li>
+<li>✅ <code>SIGTERM</code> geldiğinde zarif kapanma (graceful shutdown)</li>
+<li>✅ Testler ve CI</li>
+<li>✅ Bağımlılıkları güncel tut, kilit dosyasını (package-lock.json) commit'le</li>
+</ul>
+<div class="task" data-task>🎯 <b>Son görev:</b> Sağdaki "graceful shutdown" örneğini çalıştır ve anla. Çıktıda <code>Temiz kapandı</code> görünmeli.</div>
+`, `
+// Üretimde zarif kapanma (graceful shutdown) deseni
+const http = require("http");
+
+const server = http.createServer(async (req, res) => {
+  await new Promise(r => setTimeout(r, 100)); // yavaş bir iş
+  res.end("tamam");
+});
+server.listen(3000, () => console.log("Sunucu çalışıyor (pid", process.pid + ")"));
+
+async function kapat(sinyal) {
+  console.log(\`\\n\${sinyal} alındı, yeni istekler reddediliyor...\`);
+  server.close(async () => {
+    console.log("Açık istekler bitti, DB bağlantısı kapatılıyor...");
+    await new Promise(r => setTimeout(r, 50));
+    console.log("Temiz kapandı ✔");
+  });
+}
+process.on("SIGTERM", () => kapat("SIGTERM"));
+
+// Bir istek gönderip hemen ardından kapanma sinyali simüle edelim
+const istek = fetch("http://localhost:3000").then(r => r.text());
+await new Promise(r => setTimeout(r, 20)); // istek sunucuya ulaşsın
+process.emit("SIGTERM");
+console.log("İstek yine de tamamlandı:", await istek);
+`, { check: o => /Temiz kapandı/.test(o) });
+
+// ------------------------- ARAÇLAR -------------------------
+lesson('Araçlar','doktor','🩺 Kod Doktoru', `
+<p>Elindeki bir Node.js kod parçasını laboratuvara <b>yapıştır</b>, sonra <b>🩺 Düzelt</b> düğmesine bas (veya <kbd>Ctrl+Shift+F</kbd>). Kod Doktoru:</p>
+<ol>
+<li>Kodu <b>statik olarak</b> tarar: eksik <code>require</code>, <code>var</code>, <code>==</code>, unutulmuş <code>await</code>, kontrol edilmeyen <code>err</code>, eski API'ler…</li>
+<li>Kodu <b>sessizce çalıştırır</b>; çıkan hatayı (sözdizimi, yazım hatası, yanlış metot adı, <code>const</code>'a atama…) teşhis edip düzeltir ve tekrar dener.</li>
+<li>Yapılan her değişikliği <b>gerekçesiyle</b> ve satır satır <b>fark (diff)</b> olarak gösterir. Onaylarsan uygular; <b>Geri al</b> ile eski haline dönebilirsin.</li>
+</ol>
+<div class="note">💡 Doktor her derste çalışır — kendi görev kodunda takıldığında da kullanabilirsin.</div>
+<div class="note warn">⚠️ Doktor çevrimdışı çalışan, kural tabanlı bir araçtır (yapay zekâ değildir). Yaygın Node/JS hatalarını yakalar; mantık hatalarını ise açıklamayla birlikte sana bırakır.</div>
+<h3>Yakaladığı hatalar</h3>
+<ul>
+<li>Sözdizimi: eksik <code>)</code> <code>}</code> <code>]</code>, kapanmamış tırnak, nesnede eksik virgül</li>
+<li><code>await</code> kullanılan ama <code>async</code> olmayan fonksiyon</li>
+<li>Yazım hataları: <code>consle.log</code>, <code>fs.readfile</code>, <code>JSON.parce</code>…</li>
+<li>İçe aktarılmamış modüller (<code>fs</code>, <code>path</code>, <code>http</code>, <code>EventEmitter</code>…)</li>
+<li>Callback'siz <code>fs.readFile</code>, <code>await</code>'siz <code>fetch</code>, <code>new Buffer()</code></li>
+<li><code>const</code> değişkene yeniden atama, <code>res.send</code> (Express'e özgü) kullanımı</li>
+</ul>
+<p>Sağdaki kod bilerek bozuk yazıldı. 🩺 Düzelt'e basıp neler bulduğunu gör!</p>
+`, `
+// Bu kod bilerek hatalarla dolu — 🩺 Düzelt'e bas!
+var sayac = 0;
+const toplam = 0;
+
+function veriGetir() {
+  const r = fetch("http://localhost:3000/veri");
+  const veri = await r.json();
+  return veri;
+}
+
+const server = http.createServer((req, res) => {
+  if (req.url == "/veri") {
+    res.setHeader("Content-Type", "application/json");
+    res.send(JSON.stringify({ mesaj: "merhaba", sayac: ++sayac }));
+  }
+});
+server.listen(3000);
+
+fs.readFile("merhaba.txt", "utf8", (err, data) => {
+  consle.log("Dosya:", data.split("\\n")[0]);
+});
+
+const ayar = {
+  port: 3000
+  host: "localhost"
+};
+toplam = ayar.port + 1;
+
+const sonuc = await veriGetir();
+console.log("Sunucudan:", sonuc, "toplam:", toplam);
+console.log(JSON.stringify(ayar).toUppercase());
+server.close();
+`, { tool: true });
+
+lesson('Araçlar','kurulum','Node.js kurulumu (Windows / macOS / Linux)', `
+<p>Laboratuvar kurulum gerektirmez; ama gerçek projeler için Node'u bilgisayarına kurman gerekir. Her zaman <b>LTS</b> (uzun süreli destek) sürümünü seç.</p>
+<h3>Windows</h3>
+<pre><code># Seçenek 1 — resmi kurulum: https://nodejs.org → "LTS" indir → Next, Next…
+# Seçenek 2 — winget (PowerShell):
+winget install OpenJS.NodeJS.LTS
+
+# Seçenek 3 (önerilen) — sürüm yöneticisi fnm:
+winget install Schniz.fnm
+fnm env --use-on-cd | Out-String | Invoke-Expression   # PowerShell profiline ekle
+fnm install --lts
+fnm use lts-latest</code></pre>
+<h3>macOS</h3>
+<pre><code>brew install fnm          # veya: brew install node
+fnm install --lts
+# alternatif: nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+nvm install --lts</code></pre>
+<h3>Linux (Ubuntu/Debian)</h3>
+<pre><code>curl -fsSL https://fnm.vercel.app/install | bash
+fnm install --lts
+# veya NodeSource deposu:
+curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+sudo apt install -y nodejs</code></pre>
+<h3>Kurulumu doğrula</h3>
+<pre><code>node -v      # v22.x.x
+npm -v       # 10.x.x
+where node   # Windows'ta konum (macOS/Linux: which node)</code></pre>
+<div class="note">💡 <b>Neden sürüm yöneticisi?</b> Farklı projeler farklı Node sürümleri ister. <code>fnm</code>/<code>nvm</code> ile tek komutla geçiş yaparsın. Projeye <code>.nvmrc</code> dosyası koyarsan (içinde ör. <code>22</code>) <code>fnm use</code> doğru sürümü otomatik seçer.</div>
+<div class="note warn">⚠️ Windows'ta kurulumdan sonra açık terminalleri ve VS Code'u <b>yeniden başlat</b>; yoksa <code>node</code> komutu bulunamaz (PATH güncellenmemiş olur).</div>
+`, `
+// Kurulum sonrası kendi bilgisayarında bu kodu çalıştırıp ortamını doğrula:
+//   node index.js
+const os = require("os");
+console.log("Node   :", process.version);
+console.log("V8     :", process.versions.v8);
+console.log("Sistem :", os.type(), os.arch());
+console.log("CPU    :", os.cpus().length, "çekirdek");
+console.log("Bellek :", (os.totalmem() / 1024 ** 3).toFixed(1), "GB");
+const ana = +process.version.slice(1).split(".")[0];
+console.log(ana >= 20 ? "✔ Modern bir Node sürümü kullanıyorsun" : "⚠ Lütfen LTS sürüme güncelle");
+`, { tool:true });
+
+lesson('Araçlar','terminal','Terminal ve node komutları', `
+<p>Node geliştirmenin büyük kısmı terminalde geçer. Windows'ta <b>PowerShell</b> veya <b>Windows Terminal</b>, macOS/Linux'ta <b>bash/zsh</b> kullanılır.</p>
+<h3>Temel terminal komutları</h3>
+<table>
+<tr><th align=left>İş</th><th align=left>PowerShell</th><th align=left>bash/zsh</th></tr>
+<tr><td>Bulunduğun klasör</td><td><code>pwd</code></td><td><code>pwd</code></td></tr>
+<tr><td>Listele</td><td><code>ls</code> / <code>dir</code></td><td><code>ls -la</code></td></tr>
+<tr><td>Klasöre gir</td><td><code>cd proje</code></td><td><code>cd proje</code></td></tr>
+<tr><td>Klasör oluştur</td><td><code>mkdir api</code></td><td><code>mkdir -p api</code></td></tr>
+<tr><td>Dosya oluştur</td><td><code>ni index.js</code></td><td><code>touch index.js</code></td></tr>
+<tr><td>Dosya oku</td><td><code>cat a.txt</code></td><td><code>cat a.txt</code></td></tr>
+<tr><td>Sil</td><td><code>rm -r klasor</code></td><td><code>rm -rf klasor</code></td></tr>
+<tr><td>Ortam değişkeni</td><td><code>$env:PORT=4000</code></td><td><code>export PORT=4000</code></td></tr>
+<tr><td>Ekranı temizle</td><td><code>cls</code></td><td><code>clear</code></td></tr>
+</table>
+<h3>node komutu</h3>
+<pre><code>node index.js                 # dosyayı çalıştır
+node                          # REPL: etkileşimli konsol (.exit ile çık)
+node -e "console.log(1+1)"    # tek satırlık kod
+node --watch index.js         # dosya değişince otomatik yeniden başlat (nodemon gerekmez)
+node --env-file=.env app.js   # .env dosyasını process.env'e yükle (Node 20.6+)
+node --test                   # yerleşik test çalıştırıcı
+node --inspect index.js       # hata ayıklayıcıyı aç
+node --check index.js         # sadece sözdizimi kontrolü
+node --run dev                # package.json script'ini npm'siz çalıştır (Node 22+)</code></pre>
+<h3>Kısayollar</h3>
+<ul>
+<li><kbd>Ctrl+C</kbd> — çalışan programı/sunucuyu durdur</li>
+<li><kbd>↑</kbd> — önceki komut, <kbd>Tab</kbd> — otomatik tamamla</li>
+<li><kbd>Ctrl+R</kbd> — komut geçmişinde ara (bash/zsh, PowerShell)</li>
+</ul>
+<div class="note">💡 Sağdaki kod <code>process.argv</code> ile komut satırı argümanı okuyan küçük bir CLI aracıdır. Gerçekte: <code>node index.js selam --buyuk</code></div>
+`, `
+// Basit bir CLI aracı — gerçek kullanımı:  node index.js selam dunya --buyuk
+// Laboratuvarda argümanları elle simüle ediyoruz:
+process.argv.push("selam", "dunya", "--buyuk");
+
+const args = process.argv.slice(2);
+const bayraklar = args.filter(a => a.startsWith("--"));
+const kelimeler = args.filter(a => !a.startsWith("--"));
+
+let cikti = kelimeler.join(" ");
+if (bayraklar.includes("--buyuk")) cikti = cikti.toUpperCase();
+
+console.log("Argümanlar:", args);
+console.log("Sonuç     :", cikti);
+console.log("Çıkış kodu 0 = başarılı, 1+ = hata");
+`, { tool:true });
+
+lesson('Araçlar','vscode','VS Code ile Node geliştirme', `
+<p><b>Visual Studio Code</b> Node.js için en yaygın editördür (ücretsiz: <code>code.visualstudio.com</code>, Windows'ta <code>winget install Microsoft.VisualStudioCode</code>).</p>
+<h3>Projeyi açmak</h3>
+<pre><code>cd benim-api
+code .            # bulunduğun klasörü VS Code'da açar</code></pre>
+<p><code>code</code> komutu bulunamıyorsa: VS Code'da <kbd>Ctrl+Shift+P</kbd> → <b>"Shell Command: Install 'code' command in PATH"</b> (macOS). Windows'ta kurulumda "Add to PATH" işaretli olmalı.</p>
+<h3>Kodu çalıştırmanın 4 yolu</h3>
+<ol>
+<li><b>Entegre terminal:</b> <kbd>Ctrl+&#96;</kbd> ile aç → <code>node index.js</code></li>
+<li><b>npm script'leri:</b> Explorer altındaki <b>NPM SCRIPTS</b> panelinden ▶ tıkla</li>
+<li><b>Debug (F5):</b> Dosya açıkken <kbd>F5</kbd> → "Node.js" seç. Kırmızı nokta (breakpoint) koyduğun satırda durur.</li>
+<li><b>JavaScript Debug Terminal:</b> Terminal menüsündeki ˅ → "JavaScript Debug Terminal"; buradan çalışan her <code>node</code>/<code>npm</code> komutu otomatik debug edilir.</li>
+</ol>
+<h3>.vscode/launch.json (debug ayarı)</h3>
+<pre><code>{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Sunucuyu başlat",
+      "program": "\${workspaceFolder}/index.js",
+      "envFile": "\${workspaceFolder}/.env",
+      "skipFiles": ["&lt;node_internals&gt;/**"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "npm run dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"]
+    }
+  ]
+}</code></pre>
+<h3>Önerilen eklentiler</h3>
+<table>
+<tr><td><b>ESLint</b></td><td>Hataları yazarken yakalar</td></tr>
+<tr><td><b>Prettier</b></td><td>Otomatik kod biçimlendirme</td></tr>
+<tr><td><b>Error Lens</b></td><td>Hataları satırın yanında gösterir</td></tr>
+<tr><td><b>REST Client</b> / <b>Thunder Client</b></td><td>API'ni editörden test et</td></tr>
+<tr><td><b>DotENV</b></td><td>.env dosyası renklendirme</td></tr>
+<tr><td><b>GitLens</b></td><td>Git geçmişi satır satır</td></tr>
+</table>
+<p>Eklenti kurmak: <kbd>Ctrl+Shift+X</kbd> → ara → Install. Terminalden: <code>code --install-extension dbaeumer.vscode-eslint</code></p>
+<h3>.vscode/settings.json (kaydederken biçimlendir)</h3>
+<pre><code>{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+  "files.eol": "\\n"
+}</code></pre>
+<h3>En çok kullanılan kısayollar</h3>
+<table>
+<tr><td><kbd>Ctrl+P</kbd></td><td>Dosya aç (hızlı arama)</td></tr>
+<tr><td><kbd>Ctrl+Shift+P</kbd></td><td>Komut paleti — her şey burada</td></tr>
+<tr><td><kbd>Ctrl+&#96;</kbd></td><td>Terminali aç/kapat</td></tr>
+<tr><td><kbd>F5</kbd> / <kbd>Shift+F5</kbd></td><td>Debug başlat / durdur</td></tr>
+<tr><td><kbd>F9</kbd></td><td>Breakpoint koy/kaldır</td></tr>
+<tr><td><kbd>F10</kbd> / <kbd>F11</kbd></td><td>Debug: sonraki satır / fonksiyonun içine gir</td></tr>
+<tr><td><kbd>F12</kbd></td><td>Tanıma git</td></tr>
+<tr><td><kbd>F2</kbd></td><td>Sembolü her yerde yeniden adlandır</td></tr>
+<tr><td><kbd>Ctrl+D</kbd></td><td>Sonraki aynı kelimeyi seç (çoklu imleç)</td></tr>
+<tr><td><kbd>Alt+↑/↓</kbd></td><td>Satırı taşı</td></tr>
+<tr><td><kbd>Ctrl+/</kbd></td><td>Yorum satırı yap/kaldır</td></tr>
+<tr><td><kbd>Shift+Alt+F</kbd></td><td>Belgeyi biçimlendir</td></tr>
+<tr><td><kbd>Ctrl+Shift+F</kbd></td><td>Tüm projede ara</td></tr>
+</table>
+<div class="note">💡 macOS'ta <kbd>Ctrl</kbd> yerine <kbd>Cmd</kbd> kullan.</div>
+`, `
+// VS Code'da bu dosyayı aç, 9. satıra F9 ile breakpoint koy, F5 ile başlat.
+// Değişkenleri soldaki VARIABLES panelinde, adım adım (F10) izleyebilirsin.
+function faktoriyel(n) {
+  if (n <= 1) return 1;
+  return n * faktoriyel(n - 1);
+}
+
+for (let i = 1; i <= 5; i++) {
+  const sonuc = faktoriyel(i);   // ← breakpoint için iyi bir satır
+  console.log(\`\${i}! = \${sonuc}\`);
+}
+
+// 'debugger' ifadesi de bir breakpoint gibi davranır (debugger açıkken):
+// debugger;
+`, { tool:true });
+
+lesson('Araçlar','npm','npm, npx ve paket yönetimi', `
+<p><b>npm</b> Node ile birlikte gelir; paket kurar, script çalıştırır. Alternatifler: <b>pnpm</b> (hızlı, disk dostu), <b>yarn</b>.</p>
+<h3>Komut rehberi</h3>
+<table>
+<tr><td><code>npm init -y</code></td><td>package.json oluştur</td></tr>
+<tr><td><code>npm install</code> / <code>npm i</code></td><td>package.json'daki tüm bağımlılıkları kur</td></tr>
+<tr><td><code>npm ci</code></td><td>Kilit dosyasından birebir temiz kurulum (CI/sunucu için)</td></tr>
+<tr><td><code>npm i express</code></td><td>Bağımlılık ekle</td></tr>
+<tr><td><code>npm i -D eslint</code></td><td>Geliştirme bağımlılığı ekle</td></tr>
+<tr><td><code>npm i -g pnpm</code></td><td>Global kur (komut satırı araçları için)</td></tr>
+<tr><td><code>npm uninstall express</code></td><td>Kaldır</td></tr>
+<tr><td><code>npm run dev</code></td><td>scripts içindeki "dev"i çalıştır</td></tr>
+<tr><td><code>npm start</code> / <code>npm test</code></td><td>Özel kısayol script'ler</td></tr>
+<tr><td><code>npm outdated</code></td><td>Eski paketleri listele</td></tr>
+<tr><td><code>npm update</code></td><td>İzin verilen aralıkta güncelle</td></tr>
+<tr><td><code>npm audit</code> / <code>npm audit fix</code></td><td>Güvenlik açığı tara / düzelt</td></tr>
+<tr><td><code>npm ls</code></td><td>Kurulu bağımlılık ağacı</td></tr>
+<tr><td><code>npx create-vite@latest</code></td><td>Paketi kurmadan tek seferlik çalıştır</td></tr>
+</table>
+<h3>Sürüm aralıkları (semver)</h3>
+<pre><code>"express": "5.1.0"    # tam olarak bu sürüm
+"express": "^5.1.0"   # 5.x.x (major değişmez) — varsayılan
+"express": "~5.1.0"   # 5.1.x (sadece yamalar)
+MAJOR.MINOR.PATCH →  kırıcı değişiklik . yeni özellik . hata düzeltmesi</code></pre>
+<h3>Bilinmesi gerekenler</h3>
+<ul>
+<li><code>node_modules/</code> asla git'e eklenmez → <code>.gitignore</code>'a yaz.</li>
+<li><code>package-lock.json</code> <b>commit edilir</b>; herkes aynı sürümleri kurar.</li>
+<li><code>dependencies</code> = çalışırken gerekli; <code>devDependencies</code> = sadece geliştirmede (test, lint).</li>
+<li>Bir şeyler bozulduysa: <code>node_modules</code> ve kilit dosyasını silip <code>npm install</code>.</li>
+</ul>
+<div class="note">💡 Sağdaki kod, npm'in <code>^</code> ve <code>~</code> aralıklarını nasıl yorumladığını simüle eder.</div>
+`, `
+// npm'in semver aralıklarını nasıl yorumladığını görelim
+const parse = v => v.split(".").map(Number);
+
+function uyarMi(surum, aralik) {
+  const [M, m, p] = parse(surum);
+  const op = aralik[0];
+  const [aM, am, ap] = parse(aralik.replace(/^[\\^~]/, ""));
+  const buyukEsit = M > aM || (M === aM && (m > am || (m === am && p >= ap)));
+  if (op === "^") return buyukEsit && M === aM;
+  if (op === "~") return buyukEsit && M === aM && m === am;
+  return surum === aralik;
+}
+
+const surumler = ["4.21.0", "5.0.0", "5.1.0", "5.1.3", "5.2.0", "6.0.0"];
+for (const aralik of ["^5.1.0", "~5.1.0", "5.1.0"]) {
+  console.log(aralik.padEnd(8), "→", surumler.filter(s => uyarMi(s, aralik)).join(", "));
+}
+`, { tool:true });
+
+lesson('Araçlar','debug','Hata ayıklama (debugging) teknikleri', `
+<p>Her geliştirici zamanının büyük kısmını hata ayıklayarak geçirir. Doğru araçlar bu süreyi çok kısaltır.</p>
+<h3>1. console — hızlı ve etkili</h3>
+<pre><code>console.log({ kullanici, sepet })   // nesneyi adıyla yazdır
+console.table(dizi)                  // tablo halinde
+console.dir(obj, { depth: null })    // tüm derinlik
+console.time('x'); ...; console.timeEnd('x')
+console.trace('buraya nasıl geldim?')</code></pre>
+<h3>2. Node inspector + Chrome DevTools</h3>
+<pre><code>node --inspect index.js        # çalıştır, debugger bağlanabilir
+node --inspect-brk index.js    # ilk satırda dur
+# Chrome'da aç:  chrome://inspect  → "Open dedicated DevTools for Node"</code></pre>
+<h3>3. VS Code debugger</h3>
+<p><kbd>F9</kbd> ile breakpoint, <kbd>F5</kbd> ile başlat. Koşullu breakpoint: kırmızı noktaya sağ tık → "Edit Breakpoint" → <code>i === 42</code>. <b>Logpoint</b>: kodu değiştirmeden log at.</p>
+<h3>4. Hata mesajını okumak</h3>
+<pre><code>TypeError: Cannot read properties of undefined (reading 'ad')
+    at kullaniciAdi (/proje/servis.js:12:18)   ← dosya:satır:sütun
+    at /proje/index.js:5:3</code></pre>
+<p>Yığın izinin (stack trace) <b>en üstündeki kendi dosyan</b> genellikle hatanın yeridir.</p>
+<h3>5. Yararlı ortam değişkenleri</h3>
+<pre><code>NODE_DEBUG=http,fs node app.js           # çekirdek modül iç logları
+node --trace-warnings app.js             # uyarının kaynağını göster
+node --stack-trace-limit=50 app.js       # daha uzun stack</code></pre>
+<div class="note">🩺 Laboratuvarda takıldığında <b>Kod Doktoru</b> (🩺 Düzelt) hatayı açıklar ve çoğu zaman düzeltir.</div>
+`, `
+// Hata ayıklama araçlarını dene
+const sepet = [
+  { urun: "Kalem", fiyat: 15, adet: 4 },
+  { urun: "Defter", fiyat: 40, adet: 2 },
+  { urun: "Silgi", fiyat: 5 },            // ← hata kaynağı: adet yok!
+];
+
+console.table(sepet);
+
+console.time("hesap");
+const toplam = sepet.reduce((t, k) => t + k.fiyat * k.adet, 0);
+console.timeEnd("hesap");
+
+console.log({ toplam });                  // NaN! Neden?
+const hatali = sepet.filter(k => Number.isNaN(k.fiyat * k.adet));
+console.warn("Sorunlu kalemler:", hatali);
+console.assert(!Number.isNaN(toplam), "Toplam bir sayı olmalı");
+`, { tool:true });
+
+lesson('Araçlar','proje-yapi','Proje yapısı, .env ve Git', `
+<h3>Sıfırdan proje — adım adım</h3>
+<pre><code>mkdir benim-api
+cd benim-api
+npm init -y
+npm pkg set type=module
+npm i express
+npm i -D eslint prettier
+git init
+code .</code></pre>
+<h3>Önerilen klasör yapısı</h3>
+<pre><code>benim-api/
+├─ src/
+│  ├─ index.js          # giriş: sunucuyu başlatır
+│  ├─ app.js            # express app, middleware'ler
+│  ├─ routes/           # URL → controller eşleşmeleri
+│  ├─ controllers/      # istek/cevap mantığı
+│  ├─ services/         # iş mantığı (test edilebilir, saf)
+│  └─ db/               # veritabanı erişimi
+├─ test/
+├─ .env                 # gizli değerler (GIT'E EKLEME!)
+├─ .env.example         # örnek değişkenler (git'e eklenir)
+├─ .gitignore
+├─ .nvmrc               # kullanılacak Node sürümü
+└─ package.json</code></pre>
+<h3>.env ve .gitignore</h3>
+<pre><code># .env
+PORT=3000
+DB_URL=postgres://localhost/benimdb
+JWT_SECRET=degistir-beni
+
+# .gitignore
+node_modules/
+.env
+dist/
+*.log</code></pre>
+<p>Çalıştırma: <code>node --env-file=.env src/index.js</code> (paket gerekmez) veya script: <code>"dev": "node --watch --env-file=.env src/index.js"</code></p>
+<h3>Git temel komutları</h3>
+<pre><code>git status                      # ne değişti?
+git add .                       # değişiklikleri hazırla
+git commit -m "Kullanıcı API'si eklendi"
+git log --oneline               # geçmiş
+git switch -c ozellik/login     # yeni dal
+git push -u origin ozellik/login</code></pre>
+<h3>Docker ile çalıştırma (bonus)</h3>
+<pre><code># Dockerfile
+FROM node:22-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY . .
+CMD ["node", "src/index.js"]
+
+docker build -t benim-api .
+docker run -p 3000:3000 --env-file .env benim-api</code></pre>
+`, `
+// Basit bir .env okuyucu — node --env-file'ın yaptığını kendimiz yapalım
+const fs = require("fs");
+fs.writeFileSync(".env", "PORT=4000\\n# yorum satırı\\nDB_URL=postgres://localhost/db\\nDEBUG=true\\n");
+
+function envYukle(dosya) {
+  for (const satir of fs.readFileSync(dosya, "utf8").split("\\n")) {
+    const s = satir.trim();
+    if (!s || s.startsWith("#")) continue;
+    const [anahtar, ...deger] = s.split("=");
+    process.env[anahtar] ??= deger.join("=");
+  }
+}
+
+envYukle(".env");
+console.log("PORT  :", process.env.PORT, "(zaten varsa üzerine yazılmaz!)");
+console.log("DB_URL:", process.env.DB_URL);
+console.log("DEBUG :", process.env.DEBUG === "true");
+`, { tool:true });
+
+/* =====================================================================
+   ARAYÜZ
+   ===================================================================== */
+const store = { get(k,d){ try{ return JSON.parse(localStorage.getItem('nodeakademi:'+k)) ?? d; }catch{ return d; } }, set(k,v){ try{ localStorage.setItem('nodeakademi:'+k, JSON.stringify(v)); }catch{} } };
+let done = new Set(store.get('done', []));
+let cur = Math.min(store.get('cur', 0), L.length-1);
+const editor = document.getElementById('editor'), gutter = document.getElementById('gutter');
+
+function renderTOC(){
+  let html='', lvl='';
+  L.forEach((l,i)=>{ if(l.level!==lvl){ lvl=l.level; html+=`<div class="level">${lvl}</div>`; }
+    html+=`<div class="lesson-link ${i===cur?'active':''} ${done.has(l.id)?'done':''}" data-i="${i}"><span class="chk">${done.has(l.id)?'✓':''}</span>${i+1}. ${l.title}</div>`; });
+  document.getElementById('toc').innerHTML=html;
+  const total = L.filter(l=>!l.tool).length;
+  document.getElementById('progbar').style.width = (done.size/total*100)+'%';
+  document.getElementById('progtxt').textContent = `${done.size} / ${total} ders tamamlandı`;
+}
+document.getElementById('toc').onclick = e=>{ const el=e.target.closest('[data-i]'); if(el){ go(+el.dataset.i); document.querySelector('aside').classList.remove('open'); } };
+
+function go(i){
+  saveDraft(); cur=i; store.set('cur',i); const l=L[i];
+  let html = `<div style="color:var(--muted);font-size:13px">${l.level} · Ders ${i+1}/${L.length}</div><h2>${l.title}</h2>${l.html}`;
+  if (l.quiz) html += `<div class="quiz"><b>🧠 Mini sınav:</b> ${l.quiz.q}${l.quiz.a.map((a,j)=>`<button data-q="${j}">${a}</button>`).join('')}</div>`;
+  html += `<div class="nav">${i>0?`<button class="btn sec" onclick="go(${i-1})">← ${L[i-1].title}</button>`:'<span></span>'}${i<L.length-1?`<button class="btn" onclick="go(${i+1})">${L[i+1].title} →</button>`:'<span></span>'}</div>`;
+  const c=document.getElementById('content'); c.innerHTML=html; c.scrollTop=0;
+  c.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{ b.classList.add(+b.dataset.q===l.quiz.c?'right':'wrong'); if(+b.dataset.q===l.quiz.c) b.textContent+=' ✓ Doğru!'; });
+  if (done.has(l.id)) markTask(true);
+  c.querySelectorAll('pre').forEach(p=>{ p.style.position='relative'; const b=document.createElement('button'); b.textContent='Kopyala'; b.className='btn sec'; b.style.cssText='position:absolute;top:6px;right:6px;padding:2px 8px;font-size:11px;opacity:.8';
+    b.onclick=()=>{ const t=p.querySelector('code').innerText; (navigator.clipboard?.writeText(t)||Promise.reject()).catch(()=>{ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }); b.textContent='✓ Kopyalandı'; setTimeout(()=>b.textContent='Kopyala',1500); }; p.appendChild(b); });
+  editor.value = store.get('draft:'+l.id, l.code); updateGutter();
+  outEl.innerHTML='<span class="s">Kodu çalıştırmak için ▶ Çalıştır veya Ctrl+Enter</span>'; document.getElementById('status').textContent='';
+  renderTOC();
+}
+function markTask(ok){ const t=document.querySelector('[data-task]'); if(t&&ok&&!t.classList.contains('ok')){ t.classList.add('ok'); t.insertAdjacentHTML('beforeend','<div style="margin-top:6px;font-weight:600;color:var(--accent)">✅ Görev tamamlandı!</div>'); } }
+function checkTask(){ const l=L[cur]; if(l.check && l.check(OUTPUT, editor.value)){ if(!done.has(l.id)){ done.add(l.id); store.set('done',[...done]); renderTOC(); term('\n🎉 Görev tamamlandı! Bir sonraki derse geçebilirsin.','i'); } markTask(true); } }
+function saveDraft(){ const l=L[cur]; if(!l) return; if(editor.value && editor.value!==l.code) store.set('draft:'+l.id, editor.value); }
+function updateGutter(){ const n=editor.value.split('\n').length; gutter.textContent=Array.from({length:n},(_,i)=>i+1).join('\n'); gutter.scrollTop=editor.scrollTop; }
+
+editor.addEventListener('input', ()=>{ updateGutter(); clearTimeout(editor._t); editor._t=setTimeout(saveDraft,400); });
+editor.addEventListener('scroll', ()=>gutter.scrollTop=editor.scrollTop);
+editor.addEventListener('keydown', e=>{
+  if (e.key==='Enter' && (e.ctrlKey||e.metaKey)) { e.preventDefault(); run(); return; }
+  if ((e.key==='F'||e.key==='f') && (e.ctrlKey||e.metaKey) && e.shiftKey) { e.preventDefault(); runDoctor(); return; }
+  if (e.key==='Tab') { e.preventDefault(); const s=editor.selectionStart; editor.setRangeText('  ', s, editor.selectionEnd, 'end'); updateGutter(); }
+  if (e.key==='Enter') { const s=editor.selectionStart; const line=editor.value.slice(0,s).split('\n').pop(); let ind=line.match(/^\s*/)[0]; if(/[{[(]\s*$/.test(line)) ind+='  '; e.preventDefault(); editor.setRangeText('\n'+ind, s, editor.selectionEnd, 'end'); updateGutter(); }
+});
+function run(){ saveDraft(); runCode(editor.value); }
+document.getElementById('runBtn').onclick = run;
+document.getElementById('resetBtn').onclick = ()=>{ if(confirm('Bu dersin kodunu orijinal haline döndürmek istiyor musun?')){ store.set('draft:'+L[cur].id, null); editor.value=L[cur].code; updateGutter(); } };
+go(cur);
+</script>
+
+<script>
+/* =====================================================================
+   KOD DOKTORU — kural tabanlı statik analiz + çalıştırarak teşhis
+   ===================================================================== */
+const KNOWN_MODULES = { fs:'fs', path:'path', http:'http', os:'os', crypto:'crypto', util:'util', EventEmitter:'events', assert:'assert', stream:'stream' };
+const GLOBALS = ['console','process','require','module','exports','setTimeout','setInterval','setImmediate','clearTimeout','clearInterval','Buffer','JSON','Math','Promise','fetch','__dirname','__filename','Object','Array','String','Number','Boolean','Date','Error','TypeError','Map','Set','RegExp','Symbol','parseInt','parseFloat','isNaN','URL','undefined','null','true','false','await','async','return','function','const','let','class','new','this','typeof'];
+
+function lev(a,b){ a=a.toLowerCase(); b=b.toLowerCase(); const d=Array.from({length:a.length+1},(_,i)=>[i]); for(let j=1;j<=b.length;j++) d[0][j]=j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++) d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1)); return d[a.length][b.length]; }
+function closest(word, cands){ let best=null, bd=Infinity; for(const c of new Set(cands)){ if(c===word) continue; const d=lev(word,c); if(d<bd){ bd=d; best=c; } } return bd <= (word.length>4?2:1) ? best : null; }
+const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+
+// Metin/yorum dışındaki karakterleri işaretleyen tarayıcı (parantez dengesi için)
+function codeMask(src){ const m=new Array(src.length).fill(true); let i=0, q=null;
+  while(i<src.length){ const ch=src[i], nx=src[i+1];
+    if(q){ m[i]=false; if(ch==='\\'){ m[i+1]=false; i+=2; continue; } if(ch===q || (ch==='\n' && q!=='`')) q=null; i++; continue; }
+    if(ch==='/'&&nx==='/'){ while(i<src.length&&src[i]!=='\n'){ m[i++]=false; } continue; }
+    if(ch==='/'&&nx==='*'){ const e=src.indexOf('*/',i+2); const end=e<0?src.length:e+2; for(;i<end;i++) m[i]=false; continue; }
+    if(ch==='"'||ch==="'"||ch==='`'){ q=ch; m[i]=false; } i++; }
+  return m; }
+
+// ---------- sözdizimi onarımları ----------
+function fixQuotes(c){ return c.split('\n').map(line=>{
+  const t=line.replace(/\\./g,''); if(/\/\//.test(t.split(/["']/)[0])) return line;
+  for(const q of ['"',"'"]){ const other=q==='"'?"'":'"'; const parts=t.split(other); if((t.split(q).length-1)%2===1 && parts.length%2===1 && !t.includes('`')) return line.replace(/(\s*[);,]*\s*)$/, q+'$1'); }
+  return line; }).join('\n'); }
+function fixCommas(c){ const ls=c.split('\n'); for(let i=0;i<ls.length-1;i++){ let j=i+1; while(j<ls.length&&!ls[j].trim()) j++; if(j>=ls.length) break;
+  if(/^\s*[\w$"']+\s*:\s*\S.*[^,{(\[\s]\s*$/.test(ls[i]) && !/\/\//.test(ls[i]) && /^\s*([\w$"']+\s*:|\.\.\.)/.test(ls[j])) ls[i]=ls[i].replace(/\s*$/,','); } return ls.join('\n'); }
+function fixBrackets(c){
+  const pairs={'(':')','[':']','{':'}'};
+  // 1) satır içi: ';' ile biten ama kapanmamış ( veya [ içeren satırlar
+  let ls=c.split('\n').map(line=>{ const m=codeMask(line); const st=[]; for(let i=0;i<line.length;i++){ if(!m[i]) continue; const ch=line[i]; if('(['.includes(ch)) st.push(ch); else if(')]'.includes(ch)){ if(st.length&&pairs[st[st.length-1]]===ch) st.pop(); } else if(ch==='{'||ch==='}') return line; }
+    if(st.length && /;\s*$/.test(line)) return line.replace(/;\s*$/, st.reverse().map(x=>pairs[x]).join('')+';'); return line; });
+  c=ls.join('\n');
+  // 2) dosya sonu: kalan açık parantezleri kapat
+  const m=codeMask(c), st=[]; for(let i=0;i<c.length;i++){ if(!m[i]) continue; const ch=c[i]; if(pairs[ch]) st.push(ch); else if(')]}'.includes(ch) && st.length && pairs[st[st.length-1]]===ch) st.pop(); }
+  if(st.length) c=c.replace(/\s*$/,'\n')+st.reverse().map(x=>pairs[x]).join('')+'\n';
+  return c; }
+function fixAsync(c){
+  const m=codeMask(c); const re=/\bawait\b/g; let r, out=c, inserts=new Set();
+  while((r=re.exec(c))){ if(!m[r.index]) continue; let depth=0;
+    for(let i=r.index-1;i>=0;i--){ if(!m[i]) continue; const ch=c[i]; if(ch==='}') depth++; else if(ch==='{'){ if(depth){ depth--; continue; }
+        const before=c.slice(Math.max(0,i-200),i);
+        let mm = before.match(/(function\s*\*?\s*[\w$]*\s*\([^()]*\)\s*)$/) || before.match(/(\([^()]*\)\s*=>\s*)$/) || before.match(/([\w$]+\s*=>\s*)$/);
+        if(!mm){ const mth=before.match(/(?:^|[\s;{}])([\w$]+)(\s*\([^()]*\)\s*)$/); if(mth && !/^(if|for|while|switch|catch|with)$/.test(mth[1])) mm=[mth[1]+mth[2]]; }
+        if(mm){ const pos=i-mm[0].length+ (before.length - before.length); const start=c.lastIndexOf(mm[0].trimEnd(), i); if(!/async\s*$/.test(c.slice(Math.max(0,start-7),start))) inserts.add(start); break; }
+      } }
+  }
+  [...inserts].sort((a,b)=>b-a).forEach(p=>{ out=out.slice(0,p)+'async '+out.slice(p); });
+  return out; }
+
+// ---------- statik kurallar ----------
+const STATIC_RULES = [
+  { t:'new Buffer() → Buffer.from()', w:'new Buffer() güvenlik nedeniyle kullanımdan kaldırıldı (deprecated).', f:c=>c.replace(/new Buffer\(/g,'Buffer.from(') },
+  { t:'var → let', w:'var fonksiyon kapsamlıdır ve beklenmedik hatalara yol açar; let/const blok kapsamlıdır.', f:c=>c.replace(/(^|[\s;(])var\s+/gm,'$1let ') },
+  { t:'== / != → === / !==', w:'Gevşek eşitlik tür dönüştürür ("1" == 1 → true). Katı eşitlik daha güvenlidir.', f:c=>{ const m=codeMask(c); return c.replace(/([^=!<>])(==|!=)(?!=)/g,(x,a,op,o)=> m[o+1] && !/^\s*null\b/.test(c.slice(o+x.length)) ? a+op+'=' : x); } },
+  { t:'readFileSync için "utf8" kodlaması eklendi', w:'Kodlama verilmezse readFileSync bir Buffer döner; metin işlemleri (split, includes…) çalışmaz.', f:c=>c.replace(/readFileSync\(\s*([^,()]+?)\s*\)/g,'readFileSync($1, "utf8")') },
+  { t:'Callback\'siz fs çağrısı → await fs.promises', w:'fs.readFile vb. bir callback ister; vermezsen "Callback must be a function" hatası alırsın. Modern yol: await fs.promises.', f:c=>c.replace(/(^|[^\w.])(?<!await\s)fs\.(readFile|writeFile|appendFile|readdir|stat|unlink|mkdir|rename)\(((?:[^()]|\([^()]*\))*)\)/g,(x,p,fn,args)=> /=>|function|,\s*(cb|callback|done|next)\s*$/.test(args) ? x : `${p}await fs.promises.${fn}(${args})`) },
+  { t:'Promise döndüren çağrıya await eklendi', w:'fetch ve fs/promises Promise döndürür; await olmadan değişken bir Promise nesnesi olur, veri değil.', f:c=>{
+      c=c.replace(/(=|return)\s*(?!await)(fetch\(|fs\.promises\.\w+\(|readFile\(|writeFile\(|readdir\()/g,'$1 await $2');
+      const fetched=[...c.matchAll(/(?:const|let)\s+([\w$]+)\s*=\s*await\s+fetch\(/g)].map(x=>x[1]);
+      fetched.forEach(v=>{ c=c.replace(new RegExp(`(=|return|\\()\\s*(?!await)${esc(v)}\\.(json|text)\\(\\)`,'g'),`$1 await ${v}.$2()`); });
+      return c; } },
+  { t:'Callback\'e hata kontrolü eklendi', w:'Node callback\'lerinde ilk argüman hatadır; kontrol etmezsen data undefined olur ve program çöker.', f:c=>c.replace(/\(\s*(err|error|hata)\s*,\s*[\w$]+\s*\)\s*=>\s*\{([ \t]*\n)?(\s*)/g,(x,e,nl,ind,o)=>{ const body=c.slice(o+x.length,o+x.length+120); if(new RegExp('\\b'+e+'\\b').test(body)) return x; const indent=ind||'  '; return x.replace(/\{([ \t]*\n)?(\s*)$/,`{\n${indent}if (${e}) return console.error("Hata:", ${e}.message);\n${indent}`); }) },
+  { t:'res.send → res.end', w:'res.send Express\'e özgüdür; saf http modülünde yanıt res.end() ile gönderilir.', f:c=> /createServer/.test(c) && !/express/.test(c) ? c.replace(/\bres\.send\(/g,'res.end(') : c },
+  { t:'Eksik modül içe aktarımları eklendi', w:'Node çekirdek modülleri otomatik yüklenmez; require ile içe aktarılmalıdır.', f:c=>{
+      const add=[];
+      for(const [name,mod] of Object.entries(KNOWN_MODULES)){ const used = new RegExp(`(^|[^\\w.$])${name}\\s*[.(]|new\\s+${name}\\b|extends\\s+${name}\\b`).test(c); const declared = new RegExp(`\\b(const|let|var)\\s+(${name}\\b|\\{[^}]*\\b${name}\\b[^}]*\\})|\\bimport\\b[^\\n;]*\\b${name}\\b|\\b(function|class)\\s+${name}\\b`).test(c);
+        if(used && !declared) add.push(`const ${name} = require("${mod}");`); }
+      const fp=['readFile','writeFile','appendFile','readdir','mkdir'].filter(n=> new RegExp(`(^|[^\\w.$])${n}\\(`).test(c) && !new RegExp(`\\b(const|let|var)\\s+(${n}\\b|\\{[^}]*\\b${n}\\b[^}]*\\})|\\bimport\\b[^\\n;]*\\b${n}\\b|\\bfunction\\s+${n}\\b`).test(c));
+      if(fp.length) add.push(`const { ${fp.join(', ')} } = require("fs/promises");`);
+      return add.length ? add.join('\n')+'\n'+c : c; } },
+];
+const WARN_RULES = [
+  [c=>/require\(\s*["'](express|axios|lodash|mongoose|dotenv)["']\)/.test(c), 'npm paketi kullanılıyor; laboratuvarda npm paketleri yok. Kodu gerçek Node + npm install ile çalıştırmalısın (son derse bak).'],
+  [c=>/createServer/.test(c) && !/\.listen\(/.test(c), 'Sunucu oluşturulmuş ama listen() çağrılmamış; istek kabul etmez.'],
+  [c=>/\.then\(/.test(c) && !/\.catch\(|try\s*\{/.test(c), '.then() zinciri .catch() olmadan kullanılmış; hata olursa "unhandled rejection" oluşur.'],
+  [c=>/JSON\.parse\(/.test(c) && !/try\s*\{/.test(c), 'JSON.parse try/catch dışında; geçersiz JSON programı çökertebilir.'],
+  [c=>/readFileSync|writeFileSync/.test(c) && /createServer/.test(c), 'Sunucu kodunda senkron fs fonksiyonları var; istek işlerken event loop\'u bloklar.'],
+  [c=>/createServer\([^]*?=>\s*\{(?![^]*res\.end)/.test(c), 'Sunucu handler\'ında res.end() bulunmuyor; istemci cevap bekleyip asılı kalır.'],
+];
+
+function explainError(e){
+  const m=String(e&&e.message||e);
+  const tips=[
+    [/is not defined/, 'Tanımlanmamış bir değişken/fonksiyon kullanılıyor. Yazımı kontrol et veya require ile içe aktar.'],
+    [/Cannot read properties of (undefined|null)/, 'undefined/null bir değerin özelliğine erişiliyor. Değerin nereden geldiğini kontrol et; ?. (optional chaining) ya da önce if kontrolü kullan.'],
+    [/is not a function/, 'Fonksiyon olmayan bir şey çağrılıyor. Metot adının yazımını ve nesnenin türünü kontrol et (ör. await edilmemiş bir Promise olabilir).'],
+    [/Unexpected token|Unexpected identifier|Unexpected end/, 'Sözdizimi hatası: parantez, tırnak, virgül veya noktalı virgül eksik/fazla olabilir.'],
+    [/ENOENT/, 'Dosya bulunamadı. Yolu kontrol et; laboratuvardaki dosyalar /proje altında: merhaba.txt, veri.json, log.txt.'],
+    [/ECONNREFUSED|fetch failed/, 'Bağlanılacak sunucu yok. server.listen(PORT) çağrıldı mı, port doğru mu, sunucu fetch\'ten önce kapatılmış olabilir mi?'],
+    [/Unexpected .* JSON|JSON at position|is not valid JSON/, 'Geçersiz JSON parse edilmeye çalışılıyor. Girdi gerçekten JSON mu? try/catch ile sar.'],
+    [/Cannot find module/, 'Modül bulunamadı. Laboratuvarda yalnızca çekirdek modüller var.'],
+    [/before initialization/, 'Değişken tanımlanmadan önce kullanılıyor (TDZ). Tanımı kullanımdan yukarı taşı.'],
+    [/Callback must be a function/, 'Callback tabanlı fonksiyona callback verilmemiş; fs/promises sürümünü await ile kullan.'],
+  ];
+  const t=tips.find(([r])=>r.test(m)); return t?t[1]:'Hata mesajını ve ilgili satırı dikkatle incele; console.log ile ara değerleri yazdırmak yardımcı olur.';
+}
+
+function fixRuntime(c, e){
+  const msg=String(e&&e.message||e), name=e&&e.name;
+  if (name==='SyntaxError'){
+    if (/await is only valid/.test(msg)){ const n=fixAsync(c); if(n!==c) return {code:n, t:'Fonksiyona async eklendi', w:'await yalnızca async fonksiyonlar içinde (veya modülün en üst seviyesinde) kullanılabilir.'}; }
+    for (const [fn,t,w] of [[fixCommas,'Nesnede eksik virgül eklendi','Nesne özellikleri virgülle ayrılmalıdır.'],[fixQuotes,'Kapanmamış tırnak kapatıldı','Her açılan tırnak aynı satırda kapanmalıdır.'],[fixBrackets,'Eksik parantez kapatıldı','Açılan her ( [ { için bir kapanış gerekir.'],[fixAsync,'Fonksiyona async eklendi','await yalnızca async fonksiyonlar içinde kullanılabilir.']]){
+      const n=fn(c); if(n!==c) return {code:n,t,w}; }
+    return null;
+  }
+  let mm;
+  if ((mm=msg.match(/^([\w$]+) is not defined/))){
+    const v=mm[1];
+    if (KNOWN_MODULES[v]) return {code:`const ${v} = require("${KNOWN_MODULES[v]}");\n`+c, t:`${v} modülü içe aktarıldı`, w:'Çekirdek modüller require ile yüklenmelidir.'};
+    const ids=[...c.matchAll(/[A-Za-z_$][\w$]*/g)].map(x=>x[0]);
+    const best=closest(v,[...GLOBALS,...ids.filter(x=>x!==v)]);
+    if (best) return {code:c.replace(new RegExp(`(^|[^\\w$.])${esc(v)}(?![\\w$])`,'g'),`$1${best}`), t:`Yazım hatası: ${v} → ${best}`, w:`"${v}" tanımlı değil; büyük olasılıkla "${best}" kastedildi.`};
+  }
+  if ((mm=msg.match(/(\S*)\.([\w$]+) is not a function/))){
+    const [, obj, meth]=mm;
+    const pools={ fs:Object.keys(fs), 'fs.promises':Object.keys(fs.promises), path:Object.keys(path), JSON:['parse','stringify'], console:['log','error','warn','info','table','time','timeEnd','debug'], Object:Object.getOwnPropertyNames(Object), Math:Object.getOwnPropertyNames(Math), Array:Object.getOwnPropertyNames(Array), crypto:Object.keys(crypto), util:Object.keys(util), os:Object.keys(os), http:Object.keys(http), process:['on','exit','cwd','nextTick','uptime','memoryUsage','emit'], Promise:['all','allSettled','race','any','resolve','reject'] };
+    const pool = pools[obj] || [...Object.getOwnPropertyNames(String.prototype),...Object.getOwnPropertyNames(Array.prototype),'json','text','on','once','emit','listen','close','end','write','setHeader','writeHead','then','catch','finally'];
+    const best=closest(meth,pool);
+    if (best) return {code:c.replace(new RegExp(`\\.${esc(meth)}\\(`,'g'),`.${best}(`), t:`Yanlış metot adı: .${meth}() → .${best}()`, w:`"${meth}" diye bir metot yok; doğrusu "${best}". JavaScript büyük/küçük harfe duyarlıdır.`};
+  }
+  if (/Assignment to constant variable/.test(msg)){
+    for (const d of c.matchAll(/\bconst\s+([\w$]+)\s*=/g)){ const v=d[1]; const after=c.slice(d.index+d[0].length);
+      if (new RegExp(`(^|[^\\w$.])${esc(v)}\\s*(=(?!=)|\\+\\+|--|[+\\-*/]=)|(\\+\\+|--)${esc(v)}\\b`).test(after))
+        return {code:c.slice(0,d.index)+'let '+c.slice(d.index+6), t:`const ${v} → let ${v}`, w:'const ile tanımlanan değişkene yeniden değer atanamaz; değişecekse let kullan.'}; }
+  }
+  if (/Callback must be a function/.test(msg)){ const n=STATIC_RULES[4].f(c); if(n!==c) return {code:n,t:STATIC_RULES[4].t,w:STATIC_RULES[4].w}; }
+  return null;
+}
+
+async function diagnose(code){
+  let c=code; const fixes=[], warnings=[];
+  for (const r of STATIC_RULES){ try{ const n=r.f(c); if(n!==c){ fixes.push({t:r.t,w:r.w}); c=n; } }catch{} }
+  let remaining=null;
+  for (let i=0;i<8;i++){
+    QUIET=true; try{ await runCode(c,{maxWait:3000}); } finally { QUIET=false; }
+    const e=LAST_ERR; if(!e){ remaining=null; break; }
+    const r=fixRuntime(c,e); if(!r){ remaining=e; break; }
+    fixes.push({t:r.t,w:r.w}); c=r.code;
+    // sözdizimi düzeldikten sonra statik kurallar tekrar şans bulsun
+    for (const s of STATIC_RULES){ try{ const n=s.f(c); if(n!==c){ if(!fixes.some(f=>f.t===s.t)) fixes.push({t:s.t,w:s.w}); c=n; } }catch{} }
+  }
+  WARN_RULES.forEach(([t,msg])=>{ try{ if(t(c)) warnings.push(msg); }catch{} });
+  return { code:c, fixes, warnings, remaining };
+}
+
+function lineDiff(a,b){ const A=a.split('\n'), B=b.split('\n'), n=A.length, m=B.length;
+  const dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--) dp[i][j]=A[i]===B[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const out=[]; let i=0,j=0; while(i<n&&j<m){ if(A[i]===B[j]){ out.push([' ',A[i]]); i++; j++; } else if(dp[i+1][j]>=dp[i][j+1]) out.push(['-',A[i++]]); else out.push(['+',B[j++]]); }
+  while(i<n) out.push(['-',A[i++]]); while(j<m) out.push(['+',B[j++]]); return out; }
+
+let doctorUndo = null;
+async function runDoctor(){
+  const original=editor.value; const statusEl=document.getElementById('status');
+  if(!original.trim()){ outEl.innerHTML='<span class="w">Önce düzeltilecek kodu editöre yapıştır.</span>'; return; }
+  statusEl.textContent='🩺 analiz ediliyor…'; outEl.innerHTML='<span class="s">🩺 Kod Doktoru kodu inceliyor ve deneme çalıştırması yapıyor…</span>';
+  const r=await diagnose(original);
+  statusEl.textContent='🩺 rapor hazır';
+  const h=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  let html='<b style="color:#79c0ff">🩺 Kod Doktoru Raporu</b>\n\n';
+  if(!r.fixes.length && !r.remaining) html+='<span style="color:#3fb950">✔ Otomatik düzeltilecek bir hata bulunamadı. Kod hatasız çalışıyor.</span>\n';
+  r.fixes.forEach((f,i)=>{ html+=`<span style="color:#3fb950">✔ ${i+1}. ${h(f.t)}</span>\n<span class="s">   ${h(f.w)}</span>\n`; });
+  r.warnings.forEach(w=>{ html+=`<span class="w">⚠ ${h(w)}</span>\n`; });
+  if(r.remaining) html+=`\n<span class="e">✖ Otomatik düzeltilemedi: ${h(String(r.remaining.name||'Hata'))}: ${h(String(r.remaining.message||r.remaining))}</span>\n<span class="w">💡 ${h(explainError(r.remaining))}</span>\n`;
+  if(r.code!==original){
+    html+='\n<b>Değişiklikler:</b>\n';
+    const d=lineDiff(original,r.code); d.forEach(([k,l],idx)=>{ const near=d.slice(Math.max(0,idx-1),idx+2).some(x=>x[0]!==' '); if(k===' '&&!near) return;
+      html+= k==='+'?`<span style="color:#3fb950;background:#12261a">+ ${h(l)}</span>\n` : k==='-'?`<span style="color:#ff7b72;background:#2d1214">- ${h(l)}</span>\n` : `<span class="s">  ${h(l)}</span>\n`; });
+    html+='\n<button class="btn" id="docApply">✅ Uygula ve çalıştır</button> <button class="btn sec" id="docCancel">Vazgeç</button>';
+  }
+  outEl.innerHTML=html;
+  const ap=document.getElementById('docApply');
+  if(ap){ ap.onclick=()=>{ doctorUndo=original; editor.value=r.code; updateGutter(); saveDraft(); run().then?.(()=>{}); setTimeout(addUndo,50); };
+    document.getElementById('docCancel').onclick=()=>{ outEl.innerHTML='<span class="s">Değişiklik yapılmadı.</span>'; }; }
+}
+function addUndo(){ if(!doctorUndo) return; const b=document.createElement('div'); b.style.margin='0 0 8px'; b.innerHTML='<button class="btn sec">↶ Doktor değişikliklerini geri al</button>';
+  b.firstChild.onclick=()=>{ editor.value=doctorUndo; doctorUndo=null; updateGutter(); saveDraft(); b.remove(); }; outEl.prepend(b); }
+document.getElementById('fixBtn').onclick = runDoctor;
+</script>
+</body>
+</html>
